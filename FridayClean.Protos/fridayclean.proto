@@ -3,18 +3,18 @@ syntax = "proto3";
 package FridayClean;
 
 service FridayCleanCommunication {
-  rpc AuthSendCode (AuthSendCodeRequest) returns (AuthSendCodeResponse) {}
-  rpc AuthValidateCode (AuthValidateCodeRequest) returns (AuthValidateCodeResponse) {}
-  rpc AuthValidateToken (AuthValidateTokenRequest) returns (AuthValidateTokenResponse) {}
+	rpc AuthSendCode (AuthSendCodeRequest) returns (AuthSendCodeResponse) {}
+	rpc AuthValidateCode (AuthValidateCodeRequest) returns (AuthValidateCodeResponse) {}
+	rpc AuthValidateToken (AuthValidateTokenRequest) returns (AuthValidateTokenResponse) {}
 }
+
 
 
 message AuthSendCodeRequest {
-  string Phone = 1;
+	string Phone = 1;
 }
 
-enum AuthSendCodeResponseStatus
-{
+enum AuthSendCodeResponseStatus {
 	Success = 0;
 	InvalidPhone = 1;
 	GateWayError = 2;
@@ -23,44 +23,36 @@ enum AuthSendCodeResponseStatus
 message AuthSendCodeResponse {
 	AuthSendCodeResponseStatus ResponseStatus = 1;
 	string ErrorMessage = 2;
-  
 }
 
 
 
-message AuthValidateCodeRequest
-{
+message AuthValidateCodeRequest {
 	string Phone = 1;
 	int32 AuthCode = 2;
 }
 
-enum AuthValidateCodeResponseStatus
-{
+enum AuthValidateCodeResponseStatus {
 	ValidCode = 0;
 	InvalidCode = 1;
 }
 
-message AuthValidateCodeResponse
-{
+message AuthValidateCodeResponse {
 	AuthValidateCodeResponseStatus ResponseStatus = 1;
 	string Token = 2;
 }
 
 
 
-
-message AuthValidateTokenRequest
-{
+message AuthValidateTokenRequest {
 	string Token = 2;
 }
 
-enum AuthValidateTokenResponseStatus
-{
+enum AuthValidateTokenResponseStatus {
 	ValidToken = 0;
 	NotValidToken = 1;
 }
 
-message AuthValidateTokenResponse
-{
+message AuthValidateTokenResponse {
 	AuthValidateTokenResponseStatus ResponseStatus = 1;
 }
