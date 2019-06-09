@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
+			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:FridayClean.Client.Modeles"
+             xmlns:local2="clr-namespace:FridayClean.Client.Views"
+             x:Class="FridayClean.Client.Views.MasterPage"
+			 Padding="0,40,0,0"
+			 Icon="hamburger.png"
+			 Title="Personal Organiser">
+    <StackLayout>
+        <ListView x:Name="listView" x:FieldModifier="public" SelectedItem="{Binding SelectedItem}">
+            <!--<ListView.ItemsSource>
+                <x:Array Type="{x:Type local:MasterPageItem}">
+                    <local:MasterPageItem Title="Contacts" IconSource="contacts.png" TargetType="{x:Type local2:ContactsPage}" />
+                    <local:MasterPageItem Title="TodoList" IconSource="todo.png" TargetType="{x:Type local2:TodoListPage}" />
+                    <local:MasterPageItem Title="Reminders" IconSource="reminders.png" TargetType="{x:Type local2:ReminderPage}" />
+                </x:Array>
+            </ListView.ItemsSource>-->
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <Grid Padding="5,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Image Source="{Binding IconSource}" />
+                            <Label Grid.Column="1" Text="{Binding Title}" />
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </StackLayout>
+</ContentPage>

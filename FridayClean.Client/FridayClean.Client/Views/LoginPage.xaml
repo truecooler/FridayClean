@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="FridayClean.Client.Views.LoginPage"
+             xmlns:behavior="clr-namespace:FridayClean.Client.Behaviors"
+             BackgroundColor="White">
+    <ContentPage.Content>
+        <StackLayout Orientation="Vertical" Padding="30" Spacing="10" VerticalOptions="Start">
+            <!--<BoxView HeightRequest="10"/>-->
+            <ActivityIndicator  
+                               IsRunning="{Binding IsBusy}"  
+                               IsEnabled="{Binding IsBusy}"  
+                               IsVisible="true"  
+                               Color="{StaticResource FridayCleanBlackColor}"  
+                               BackgroundColor="Transparent"/>
+            <Image HorizontalOptions="Center" WidthRequest="300" Source="fridayclean_logo.png" />
+            <Frame BackgroundColor="{StaticResource FridayCleanBlackColor}" HasShadow="False" CornerRadius="10">
+                <StackLayout Orientation="Vertical" Spacing="10">
+                    <Entry x:Name="PhoneEntry" Text="{Binding Phone}" Placeholder="Введите номер телефона"   
+                           PlaceholderColor="White" HeightRequest="45"   
+                           Keyboard="Numeric"  
+                           TextColor="White">
+                        <Entry.Behaviors>
+                            <behavior:MaskedBehavior Mask="+X (XXX) XXX-XXXX" />
+                        </Entry.Behaviors>
+                    </Entry>
+                    <Entry x:Name="CodeEntry" Text="{Binding Code}" Placeholder="Код из смс"   
+                           PlaceholderColor="White" HeightRequest="45"   
+                           TextColor="White"
+                           Keyboard="Numeric" 
+                           MaxLength="5"
+                           IsVisible="{Binding IsWaitingForCode}">
+                    </Entry>
+                </StackLayout>
+            </Frame>
+            <Button x:Name="LoginButton" Command="{Binding LoginCommand}" Text="Next" TextColor="White"  
+                    FontAttributes="Bold" FontSize="Large" HorizontalOptions="FillAndExpand"  
+                    BackgroundColor="{StaticResource FridayCleanBlackColor}" 
+                    CornerRadius="10"
+                    IsEnabled="False">
+                <Button.Triggers>
+                    <DataTrigger TargetType="Button"
+                                 Binding   ="{Binding Source={x:Reference PhoneEntry}, Path=Text.Length}" 
+                                 Value     ="17"  >
+                        <Setter Property="IsEnabled"  Value="true"/>
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
+        </StackLayout>
+</ContentPage.Content>
+</ContentPage>
