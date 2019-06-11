@@ -27,7 +27,7 @@ namespace FridayClean.Client.Api.IntegrationTests
 		public void Api_SendCodeWithValidPhone_SmsDelivered()
 		{
 			var response = _api.AuthSendCode(new AuthSendCodeRequest() {Phone = _validPhone });
-			Assert.AreEqual(response.ResponseStatus,AuthSendCodeResponseStatus.Success);
+			Assert.AreEqual(AuthSendCodeResponseStatus.Success,response.ResponseStatus);
 		}
 
 
@@ -37,7 +37,7 @@ namespace FridayClean.Client.Api.IntegrationTests
 
 
 			var response = _api.AuthSendCode(new AuthSendCodeRequest() { Phone = _invalidPhone });
-			Assert.AreEqual(response.ResponseStatus, AuthSendCodeResponseStatus.InvalidPhone);
+			Assert.AreEqual(AuthSendCodeResponseStatus.InvalidPhone, response.ResponseStatus );
 		}
 
 
@@ -45,7 +45,7 @@ namespace FridayClean.Client.Api.IntegrationTests
 		public void Api_ValidateCode_InvalidCodeError()
 		{
 			var response = _api.AuthValidateCode(new AuthValidateCodeRequest(){Phone = _validPhone,AuthCode = _InvalidCode});
-			Assert.AreEqual(response.ResponseStatus, AuthValidateCodeResponseStatus.InvalidCode);
+			Assert.AreEqual(AuthValidateCodeResponseStatus.InvalidCode,response.ResponseStatus);
 		}
 
 
@@ -53,7 +53,7 @@ namespace FridayClean.Client.Api.IntegrationTests
 		public void Api_ValidateCode_ValidCode()
 		{
 			var response = _api.AuthValidateCode(new AuthValidateCodeRequest() { Phone = _validPhone, AuthCode = _superValidCode });
-			Assert.AreEqual(response.ResponseStatus, AuthValidateCodeResponseStatus.ValidCode);
+			Assert.AreEqual(AuthValidateCodeResponseStatus.ValidCode,response.ResponseStatus);
 		}
 	}
 }

@@ -26,6 +26,8 @@
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
 
     <PackageReference Include="RestSharp" Version="106.6.9" />
+
+    <PackageReference Include="Serilog.Extensions.Logging.File" Version="1.1.0" />
   </ItemGroup>
 
 </Project>
