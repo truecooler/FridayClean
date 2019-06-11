@@ -19,8 +19,8 @@ namespace FridayClean.Server
 			Host.CreateDefaultBuilder(args)
 				.ConfigureWebHostDefaults(webBuilder =>
 				{
-					webBuilder.UseStartup<Startup>()
-						.ConfigureKestrel(x=> x.ListenAnyIP(443));
+					webBuilder.UseStartup<Startup>();
+					//.ConfigureKestrel(x=> x.ListenAnyIP(443));
 				});
 	}
 }
