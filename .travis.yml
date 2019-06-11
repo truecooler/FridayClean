@@ -14,4 +14,6 @@ mono: none
 script:  
   - sudo snap alias dotnet-sdk.dotnet dotnet
   - dotnet --version
-  - dotnet build
+  - dotnet build ./FridayClean.Server
+  - dotnet build ./FridayClean.Client.Api
+  - dotnet build ./FridayClean.Client.Api.IntegrationTests
