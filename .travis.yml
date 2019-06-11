@@ -4,15 +4,9 @@ addons:
   - name: dotnet-sdk
     classic: true
     channel: latest/beta
-	
-language: csharp  
-sudo: required  
-#dist: trusty  
+sudo: required
+language: csharp
 mono: none
-dotnet: 3.0.100-preview5-011568
-#before_script:
-#  - dotnet restore
-script:  
+script:
   - sudo snap alias dotnet-sdk.dotnet dotnet
   - dotnet --version
-  - dotnet build
