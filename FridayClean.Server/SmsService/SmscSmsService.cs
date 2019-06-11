@@ -27,6 +27,12 @@ namespace FridayClean.Server.SmsService
 			public int ErrorCode { get; set; }
 		}
 
+		private enum SmsGatewayErrorCodes
+		{
+			NotAnError = 0,
+			InvalidPhone = 7
+		}
+
 		private IRestClient _restClient;
 		public SmscSmsService(IRestClient restClient, ILogger<SmscSmsService> logger, FridayCleanServiceSettings settings)
 		{
@@ -68,12 +74,12 @@ namespace FridayClean.Server.SmsService
 
 			SmscSmsServiceResponse json = response.Data;
 
-			if (json.ErrorCode == 7)
+			if (json.ErrorCode == (int)SmsGatewayErrorCodes.InvalidPhone)
 			{
 				return AuthSendCodeResponseStatus.InvalidPhone;
 			}
 
-			if (json.ErrorCode != 0)
+			if (json.ErrorCode != (int)SmsGatewayErrorCodes.NotAnError)
 			{
 				return AuthSendCodeResponseStatus.GateWayError;
 			}
