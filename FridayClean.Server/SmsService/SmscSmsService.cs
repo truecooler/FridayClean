@@ -74,6 +74,8 @@ namespace FridayClean.Server.SmsService
 
 			SmscSmsServiceResponse json = response.Data;
 
+			_logger.LogInformation($"SmsGatewayResponse: {Environment.NewLine}{response.Content}");
+
 			if (json.ErrorCode == (int)SmsGatewayErrorCodes.InvalidPhone)
 			{
 				return AuthSendCodeResponseStatus.InvalidPhone;
