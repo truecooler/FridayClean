@@ -30,12 +30,10 @@ namespace FridayClean.Client.Api.IntegrationTests
 			Assert.AreEqual(AuthSendCodeResponseStatus.Success,response.ResponseStatus);
 		}
 
-
+		//TODO: Make tests with async version of api
 		[TestMethod]
 		public void Api_SendCodeWithInvalidPhone_InvalidPhoneError()
 		{
-
-
 			var response = _api.AuthSendCode(new AuthSendCodeRequest() { Phone = _invalidPhone });
 			Assert.AreEqual(AuthSendCodeResponseStatus.InvalidPhone, response.ResponseStatus );
 		}
