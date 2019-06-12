@@ -79,9 +79,9 @@ namespace FridayClean.Client.Api
 			}
 		}
 
-		public  Task<AuthSendCodeResponse> AuthSendCodeAsync(AuthSendCodeRequest request)
+		public Task<AuthSendCodeResponse> AuthSendCodeAsync(AuthSendCodeRequest request)
 		{
-			return  CallApiAndRethrowExceptionsAsync(async x => await x.AuthSendCodeAsync(request));
+			return CallApiAndRethrowExceptionsAsync(async x => await x.AuthSendCodeAsync(request));
 		}
 
 		public AuthSendCodeResponse AuthSendCode(AuthSendCodeRequest request)

@@ -11,12 +11,16 @@ using FridayClean.Client.Helpers;
 using Plugin.Toast;
 using Plugin.Toast.Abstractions;
 using Prism.Navigation;
+using Prism.Services;
+using System.Threading.Tasks;
 
 namespace FridayClean.Client.ViewModels
 {
 	public class LoginPageViewModel : ViewModelBase
 	{
 		private INavigationService _navigationService;
+
+		private IPageDialogService _dialogService;
 
 		private IFridayCleanApi _api;
 
@@ -48,12 +52,26 @@ namespace FridayClean.Client.ViewModels
 			set => SetProperty(ref _code, value);
 		}
 		public ICommand LoginCommand { protected set; get; }
-		public LoginPageViewModel(INavigationService navigationService, IFridayCleanApi api) : base(navigationService)
+		public LoginPageViewModel(INavigationService navigationService,
+			IPageDialogService dialogService, IFridayCleanApi api) : base(navigationService)
 		{
+			
+
+			_dialogService = dialogService;
 			_api = api;
 			_navigationService = navigationService;
 			LoginCommand = new Command(OnLoginAsync,()=>false);
 		}
+
+		public override async void OnNavigatedTo(INavigationParameters parameters)
+		{
+			await Task.Yield();
+			if (Utils.AppCrashHelper.IsCrashLogExists)
+			{
+				await _dialogService.DisplayAlertAsync("Last crash info", Utils.AppCrashHelper.ReadCrashLogFile(), "OK");
+			}
+		}
+
 		public async void OnLoginAsync()
 		{
 			if (!IsWaitingForCode)

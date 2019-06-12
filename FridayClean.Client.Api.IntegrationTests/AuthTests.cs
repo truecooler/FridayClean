@@ -3,14 +3,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace FridayClean.Client.Api.IntegrationTests
 {
 	[TestClass]
-	public class AuthTests
+	public class AuthTests : TestsBase
 	{
-		private FridayCleanApi _api;
-		private string _validPhone = "79154013049";
-		private string _invalidPhone = "79154228013049";
-		private int _superValidCode = 00000;
-		private int _InvalidCode = 12345;
-
+		
 		[TestInitialize]
 		public void TestInitialize()
 		{
@@ -24,23 +19,39 @@ namespace FridayClean.Client.Api.IntegrationTests
 		}
 
 		[TestMethod]
-		public void Api_SendCodeWithValidPhone_SmsDelivered()
+		public void AuthSendCode_SendCodeWithValidPhone_SmsDelivered()
 		{
 			var response = _api.AuthSendCode(new AuthSendCodeRequest() {Phone = _validPhone });
 			Assert.AreEqual(AuthSendCodeResponseStatus.Success,response.ResponseStatus);
 		}
 
+		
+
+		[TestMethod]
+		public void AuthSendCodeAsync_SendCodeWithValidPhone_SmsDelivered()
+		{
+			var response = _api.AuthSendCodeAsync(new AuthSendCodeRequest() { Phone = _validPhone }).GetAwaiter().GetResult();
+			Assert.AreEqual(AuthSendCodeResponseStatus.Success, response.ResponseStatus);
+		}
+
 		//TODO: Make tests with async version of api
 		[TestMethod]
-		public void Api_SendCodeWithInvalidPhone_InvalidPhoneError()
+		public void AuthSendCode_SendCodeWithInvalidPhone_InvalidPhoneError()
 		{
 			var response = _api.AuthSendCode(new AuthSendCodeRequest() { Phone = _invalidPhone });
 			Assert.AreEqual(AuthSendCodeResponseStatus.InvalidPhone, response.ResponseStatus );
 		}
 
+		[TestMethod]
+		public void AuthSendCodeAsync_SendCodeWithInvalidPhone_InvalidPhoneError()
+		{
+			var response = _api.AuthSendCodeAsync(new AuthSendCodeRequest() { Phone = _invalidPhone }).GetAwaiter().GetResult();
+			Assert.AreEqual(AuthSendCodeResponseStatus.InvalidPhone, response.ResponseStatus);
+		}
+
 
 		[TestMethod]
-		public void Api_ValidateCode_InvalidCodeError()
+		public void AuthValidateCode_ValidateCode_InvalidCodeError()
 		{
 			var response = _api.AuthValidateCode(new AuthValidateCodeRequest(){Phone = _validPhone,AuthCode = _InvalidCode});
 			Assert.AreEqual(AuthValidateCodeResponseStatus.InvalidCode,response.ResponseStatus);
@@ -48,10 +59,28 @@ namespace FridayClean.Client.Api.IntegrationTests
 
 
 		[TestMethod]
-		public void Api_ValidateCode_ValidCode()
+		public void AuthValidateCodeAsync_ValidateCode_InvalidCodeError()
+		{
+			var response = _api.AuthValidateCodeAsync(new AuthValidateCodeRequest() { Phone = _validPhone, AuthCode = _InvalidCode }).GetAwaiter().GetResult();
+			Assert.AreEqual(AuthValidateCodeResponseStatus.InvalidCode, response.ResponseStatus);
+		}
+
+
+		[TestMethod]
+		public void AuthValidateCode_ValidateCode_ValidCode()
 		{
 			var response = _api.AuthValidateCode(new AuthValidateCodeRequest() { Phone = _validPhone, AuthCode = _superValidCode });
 			Assert.AreEqual(AuthValidateCodeResponseStatus.ValidCode,response.ResponseStatus);
 		}
+
+
+		[TestMethod]
+		public void AuthValidateCodeAsync_ValidateCode_ValidCode()
+		{
+			var response = _api.AuthValidateCodeAsync(new AuthValidateCodeRequest() { Phone = _validPhone, AuthCode = _superValidCode }).GetAwaiter().GetResult();
+			Assert.AreEqual(AuthValidateCodeResponseStatus.ValidCode, response.ResponseStatus);
+		}
+
+
 	}
 }
