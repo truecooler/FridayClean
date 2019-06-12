@@ -3,7 +3,7 @@
     "FridayClean.Server": {
       "commandName": "Project",
       "launchBrowser": false,
-      "applicationUrl": "http://localhost:50051",
+      "applicationUrl": "http://0.0.0.0:80",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

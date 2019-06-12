@@ -1,3 +1,4 @@
+using Grpc.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace FridayClean.Client.Api.IntegrationTests
@@ -9,7 +10,7 @@ namespace FridayClean.Client.Api.IntegrationTests
 		[TestInitialize]
 		public void TestInitialize()
 		{
-			_api = new FridayCleanApi(FridayCleanApiSettings.Default());
+			_api = new FridayCleanApi(FridayCleanApiSettings.DevelopmentDefault());
 		}
 
 		[TestCleanup]

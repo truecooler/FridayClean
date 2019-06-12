@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using FridayClean.Common;
 
 //using FridayCleanProtocol;
 
@@ -26,9 +27,9 @@ namespace FridayClean.Server
 
 		public async override Task<AuthSendCodeResponse> AuthSendCode(AuthSendCodeRequest request, ServerCallContext context)
 		{
-			//_smsService = (ISmsService)context.GetHttpContext().RequestServices.GetService(typeof(ISmsService));
+			var token = context.RequestHeaders.SingleOrDefault(x => x.Key.Contains(Constants.AuthHeaderName))?.Value;
 			int code = new Random().Next(10000,99999);
-			_logger.LogInformation($"code : {code}");
+			_logger.LogInformation($"code : {code}, token: {token}");
 			Codes[request.Phone] = code;
 			return new AuthSendCodeResponse()
 			{

@@ -4,6 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using FridayClean.Client.Api.Exceptions;
 using System.Reflection;
+using System.Threading;
+using FridayClean.Client.Api.Extensions;
+using Grpc.Core.Interceptors;
+using FridayClean.Common;
 
 namespace FridayClean.Client.Api
 {
@@ -19,7 +23,18 @@ namespace FridayClean.Client.Api
 		public FridayCleanApi(FridayCleanApiSettings settings)
 		{
 			Settings = settings;
-			_channel = new Channel($"{Settings.Host}:{Settings.Port}", SslCredentials.Insecure);
+
+			var asyncAuthInterceptor = new AsyncAuthInterceptor( (context, metadata) =>
+			{
+				metadata.Add(Constants.AuthHeaderName, Settings.AccessToken);
+				return Task.CompletedTask;
+			});
+
+			var channelCredentials = ChannelCredentials.Create(ChannelCredentials.Insecure,
+				CallCredentials.FromInterceptor(asyncAuthInterceptor));
+
+			
+			_channel = new Channel($"{Settings.Host}:{Settings.Port}", channelCredentials);
 			_client = new FridayCleanCommunication.FridayCleanCommunicationClient(_channel);
 		}
 
@@ -79,35 +94,40 @@ namespace FridayClean.Client.Api
 			}
 		}
 
-		public Task<AuthSendCodeResponse> AuthSendCodeAsync(AuthSendCodeRequest request)
+		public Task<AuthSendCodeResponse> AuthSendCodeAsync(AuthSendCodeRequest request, Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default)
 		{
-			return CallApiAndRethrowExceptionsAsync(async x => await x.AuthSendCodeAsync(request));
+			return CallApiAndRethrowExceptionsAsync(async x => await x.AuthSendCodeAsync(request, headers, deadline, cancellationToken));
 		}
 
-		public AuthSendCodeResponse AuthSendCode(AuthSendCodeRequest request)
+		public AuthSendCodeResponse AuthSendCode(AuthSendCodeRequest request, Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default)
 		{
-			return CallApiAndRethrowExceptions(x => x.AuthSendCode(request));
+			return CallApiAndRethrowExceptions(x => x.AuthSendCode(request, headers, deadline, cancellationToken));
 		}
 
-		public Task<AuthValidateCodeResponse> AuthValidateCodeAsync(AuthValidateCodeRequest request)
+		public Task<AuthValidateCodeResponse> AuthValidateCodeAsync(AuthValidateCodeRequest request, Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default)
 		{
-			return CallApiAndRethrowExceptions(async x => await x.AuthValidateCodeAsync(request));
+			return CallApiAndRethrowExceptions(async x => await x.AuthValidateCodeAsync(request, headers, deadline, cancellationToken));
 		}
 
-		public AuthValidateCodeResponse AuthValidateCode(AuthValidateCodeRequest request)
+		//public AuthValidateCodeResponse AuthValidateCode(AuthValidateCodeRequest request, CallOptions options)
+		//{
+		//	return CallApiAndRethrowExceptions(x => x.AuthValidateCode(request,options.Headers,options.Deadline,options.CancellationToken));
+		//}
+
+		public AuthValidateCodeResponse AuthValidateCode(AuthValidateCodeRequest request, Metadata headers = null,DateTime? deadline=null, CancellationToken cancellationToken=default)
 		{
-			return CallApiAndRethrowExceptions(x => x.AuthValidateCode(request));
+			return CallApiAndRethrowExceptions(x => x.AuthValidateCode(request, headers, deadline, cancellationToken));
 		}
 
 
-		public Task<AuthValidateTokenResponse> AuthValidateTokenAsync(AuthValidateTokenRequest request)
+		public Task<AuthValidateTokenResponse> AuthValidateTokenAsync(AuthValidateTokenRequest request, Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default)
 		{
-			return CallApiAndRethrowExceptions(async x => await x.AuthValidateTokenAsync(request));
+			return CallApiAndRethrowExceptions(async x => await x.AuthValidateTokenAsync(request, headers, deadline, cancellationToken));
 		}
 
-		public AuthValidateTokenResponse AuthValidateToken(AuthValidateTokenRequest request)
+		public AuthValidateTokenResponse AuthValidateToken(AuthValidateTokenRequest request, Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default)
 		{
-			return CallApiAndRethrowExceptions( x=>x.AuthValidateToken(request));
+			return CallApiAndRethrowExceptions( x=>x.AuthValidateToken(request, headers, deadline, cancellationToken));
 		}
 
 		public void Dispose()

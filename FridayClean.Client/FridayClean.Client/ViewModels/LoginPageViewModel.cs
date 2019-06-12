@@ -13,6 +13,7 @@ using Plugin.Toast.Abstractions;
 using Prism.Navigation;
 using Prism.Services;
 using System.Threading.Tasks;
+using Grpc.Core;
 
 namespace FridayClean.Client.ViewModels
 {

@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FridayClean.Client.Api", "F
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FridayClean.Server", "FridayClean.Server\FridayClean.Server.csproj", "{240382B8-9F56-4356-BDBA-226E4598CB86}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FridayClean.Client.Api.IntegrationTests", "FridayClean.Client.Api.IntegrationTests\FridayClean.Client.Api.IntegrationTests.csproj", "{AB0B1F27-B767-469A-B8EE-6B3303640879}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FridayClean.Client.Api.IntegrationTests", "FridayClean.Client.Api.IntegrationTests\FridayClean.Client.Api.IntegrationTests.csproj", "{AB0B1F27-B767-469A-B8EE-6B3303640879}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FridayClean.Common", "FridayClean.Common\FridayClean.Common.csproj", "{4D2E2A20-AEC8-40AE-B075-86084913C225}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -101,6 +103,18 @@ Global
 		{AB0B1F27-B767-469A-B8EE-6B3303640879}.Release|iPhone.Build.0 = Release|Any CPU
 		{AB0B1F27-B767-469A-B8EE-6B3303640879}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
 		{AB0B1F27-B767-469A-B8EE-6B3303640879}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{4D2E2A20-AEC8-40AE-B075-86084913C225}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D2E2A20-AEC8-40AE-B075-86084913C225}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D2E2A20-AEC8-40AE-B075-86084913C225}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{4D2E2A20-AEC8-40AE-B075-86084913C225}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{4D2E2A20-AEC8-40AE-B075-86084913C225}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{4D2E2A20-AEC8-40AE-B075-86084913C225}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{4D2E2A20-AEC8-40AE-B075-86084913C225}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D2E2A20-AEC8-40AE-B075-86084913C225}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D2E2A20-AEC8-40AE-B075-86084913C225}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{4D2E2A20-AEC8-40AE-B075-86084913C225}.Release|iPhone.Build.0 = Release|Any CPU
+		{4D2E2A20-AEC8-40AE-B075-86084913C225}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{4D2E2A20-AEC8-40AE-B075-86084913C225}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

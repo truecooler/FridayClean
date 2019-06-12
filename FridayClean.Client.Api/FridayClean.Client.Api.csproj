@@ -14,5 +14,9 @@
     <PackageReference Include="Grpc.Core" Version="1.21.0" />
     <PackageReference Include="Grpc.Tools" Version="1.21.0" PrivateAssets="All" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\FridayClean.Common\FridayClean.Common.csproj" />
+  </ItemGroup>
 
 </Project>
