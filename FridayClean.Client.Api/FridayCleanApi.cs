@@ -8,6 +8,10 @@ using System.Threading;
 using FridayClean.Client.Api.Extensions;
 using Grpc.Core.Interceptors;
 using FridayClean.Common;
+using System.Runtime.ExceptionServices;
+using Grpc.Core.Utils;
+using FridayClean.Common.Helpers;
+using System.Collections.Generic;
 
 namespace FridayClean.Client.Api
 {
@@ -30,7 +34,12 @@ namespace FridayClean.Client.Api
 				return Task.CompletedTask;
 			});
 
-			var channelCredentials = ChannelCredentials.Create(ChannelCredentials.Insecure,
+			var options = new List<ChannelOption>
+			{
+				new ChannelOption(ChannelOptions.SslTargetNameOverride, Utils.Ssl.DefaultHostOverride)
+			};
+
+			var channelCredentials = ChannelCredentials.Create(Utils.Ssl.CreateSslClientCredentials(),
 				CallCredentials.FromInterceptor(asyncAuthInterceptor));
 
 			
@@ -51,7 +60,7 @@ namespace FridayClean.Client.Api
 				throw new ApplicationException("Can't find the type of catched grpc exception");
 			}
 
-			throw (GrpcExceptionBase)Activator.CreateInstance(type, ex.Message, ex.InnerException, ex.Status,
+			throw (GrpcExceptionBase)Activator.CreateInstance(type, ex.Message, ex, ex.Status,
 				ex.Trailers);
 		}
 
@@ -62,21 +71,24 @@ namespace FridayClean.Client.Api
 
 			return func(_client).ContinueWith( x=>
 			{
-				foreach (Exception unpackedEx in x.Exception.InnerExceptions)
+				if (x.IsFaulted)
 				{
-					if (unpackedEx is RpcException rpcEx)
+					foreach (Exception unpackedEx in x.Exception.InnerExceptions)
 					{
-						FindExceptionTypeAndThrow(rpcEx);
-					}
-					else
-					{
-						throw x.Exception;
+						if (unpackedEx is RpcException rpcEx)
+						{
+							FindExceptionTypeAndThrow(rpcEx);
+						}
+						else
+						{
+							throw x.Exception;
+						}
 					}
 				}
-				
+
 				return x.Result;
 
-			},TaskContinuationOptions.OnlyOnFaulted);
+			});
 			
 		}
 
@@ -94,8 +106,9 @@ namespace FridayClean.Client.Api
 			}
 		}
 
-		public Task<AuthSendCodeResponse> AuthSendCodeAsync(AuthSendCodeRequest request, Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default)
+		public  Task<AuthSendCodeResponse> AuthSendCodeAsync(AuthSendCodeRequest request, Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default)
 		{
+			//return await _client.AuthSendCodeAsync(request, headers, deadline, cancellationToken);
 			return CallApiAndRethrowExceptionsAsync(async x => await x.AuthSendCodeAsync(request, headers, deadline, cancellationToken));
 		}
 
