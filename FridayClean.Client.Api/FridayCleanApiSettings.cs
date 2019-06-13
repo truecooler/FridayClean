@@ -12,7 +12,7 @@ namespace FridayClean.Client.Api
 
 		public static FridayCleanApiSettings ProductionDefault()
 		{
-			return new FridayCleanApiSettings() {Host = "fridayclean.thecooler.ru", Port = 80, AccessToken = ""};
+			return new FridayCleanApiSettings() {Host = "fridayclean.thecooler.ru", Port = 443, AccessToken = ""};
 		}
 
 		public static FridayCleanApiSettings DevelopmentDefault()
