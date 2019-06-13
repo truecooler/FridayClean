@@ -43,7 +43,7 @@ namespace FridayClean.Client.Api
 				CallCredentials.FromInterceptor(asyncAuthInterceptor));
 
 			
-			_channel = new Channel($"{Settings.Host}:{Settings.Port}", channelCredentials);
+			_channel = new Channel($"{Settings.Host}:{Settings.Port}", channelCredentials, options);
 			_client = new FridayCleanCommunication.FridayCleanCommunicationClient(_channel);
 		}
 
