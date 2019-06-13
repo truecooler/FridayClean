@@ -8,4 +8,16 @@
     <PackageReference Include="Grpc.Core" Version="1.21.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Certificates\ca.pem">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Certificates\server1.key">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Certificates\server1.pem">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
