@@ -2,7 +2,9 @@
 using Grpc.Core;
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using FridayClean.Common;
 using FridayClean.Common.Interceptors;
 using Grpc.Core.Interceptors;
 
@@ -31,14 +33,20 @@ namespace FridayClean.Client.Api
 				new ChannelOption(Grpc.Core.ChannelOptions.SslTargetNameOverride, Utils.Ssl.DefaultHostOverride)
 			};
 
-			//var creds = ChannelCredentials.Create(Utils.Ssl.CreateSslClientCredentials(),
-			//	CallCredentials.FromInterceptor(asyncAuthInterceptor);
-
-			return new FridayCleanApiSettings() {Host = "fridayclean.thecooler.ru", Port = 443, AccessToken = "",
+			var result = new FridayCleanApiSettings()
+			{
+				Host = "fridayclean.thecooler.ru",
+				Port = 443,
+				AccessToken = "loltoken",
 				ChannelOptions = options,
-				ChannelCredentials = Utils.Ssl.CreateSslClientCredentials(),
-				Interceptors = new List<Interceptor>() { new AuthInterceptor() }
+				ChannelCredentials = Utils.Ssl.CreateSslClientCredentials()
 			};
+
+			Action<CallOptions> callback = (CallOptions x) => x.Headers.Add(Constants.AuthHeaderName, result.AccessToken);
+
+			result.Interceptors = new List<Interceptor>() {new AuthInterceptor(callback)};
+
+			return result;
 		}
 
 		public static FridayCleanApiSettings DevelopmentDefault()

@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FridayClean.Common;
+using FridayClean.Common.Interceptors;
 using FridayClean.Server.SmsService;
 using Grpc.AspNetCore.Server;
+using Grpc.Core;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -20,16 +23,25 @@ namespace FridayClean.Server
 		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
 		public void ConfigureServices(IServiceCollection services)
 		{
-			services.AddGrpc();//.AddServiceOptions<FridayCleanService>();
+			services.AddGrpc().AddServiceOptions<FridayCleanService>(options => options.Interceptors.Add<AuthInterceptor>());
+			
 			services.AddSingleton<ISmsService, SmscSmsService>();
 			services.AddSingleton<IRestClient, RestClient>();
 
 			/* very ugly way, don't use in production */
 			var serviceProvider = services.BuildServiceProvider();
-			var logger = serviceProvider.GetService(typeof(ILogger<FridayCleanServiceSettings>));
-			var settings = FridayCleanServiceSettings.LoadOrCreateDefault((ILogger<FridayCleanServiceSettings>)logger);
+			ILogger<FridayCleanServiceSettings> logger = 
+				(ILogger<FridayCleanServiceSettings>)serviceProvider.GetService(typeof(ILogger<FridayCleanServiceSettings>));
+			var settings = FridayCleanServiceSettings.LoadOrCreateDefault(logger);
 
 			services.AddSingleton<FridayCleanServiceSettings>(settings);
+
+			Action<ServerCallContext> callback = (context) =>
+			{
+				logger.LogInformation($"interceptor, {context.RequestHeaders.SingleOrDefault(x=>x.Key==Constants.AuthHeaderName).Value}");
+			};
+
+			services.AddSingleton<AuthInterceptor>(new AuthInterceptor(callback));
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Microsoft.Extensions.Logging;
@@ -11,16 +13,24 @@ namespace FridayClean.Common.Interceptors
 	{
 		private ILogger _logger;
 
-		public AuthInterceptor()
+
+		private Action<CallOptions> _clientCallback;
+		private Action<ServerCallContext> _serverCallback;
+		public AuthInterceptor(Action<CallOptions> clientCallback)
 		{
-			//_logger = logger;
+			_clientCallback = clientCallback;
+		}
+
+		public AuthInterceptor(Action<ServerCallContext> serverCallback)
+		{
+			_serverCallback = serverCallback;
 		}
 
 		public override TResponse BlockingUnaryCall<TRequest, TResponse>(TRequest request,
 			ClientInterceptorContext<TRequest, TResponse> context,
 			BlockingUnaryCallContinuation<TRequest, TResponse> continuation)
 		{
-			context.Options.Headers.Add(Constants.AuthHeaderName,"token!!");
+			_clientCallback(context.Options);
 			return continuation(request, context);
 		}
 
@@ -28,7 +38,15 @@ namespace FridayClean.Common.Interceptors
 			ClientInterceptorContext<TRequest, TResponse> context,
 			AsyncUnaryCallContinuation<TRequest, TResponse> continuation)
 		{
-			context.Options.Headers.Add(Constants.AuthHeaderName, "token!!");
+			_clientCallback(context.Options);
+			//context.Options.Headers.Add(Constants.AuthHeaderName, "token!!");
+			return continuation(request, context);
+		}
+
+		public override Task<TResponse> UnaryServerHandler<TRequest, TResponse>(TRequest request,
+			ServerCallContext context, UnaryServerMethod<TRequest, TResponse> continuation)
+		{
+			_serverCallback(context);
 			return continuation(request, context);
 		}
 	}

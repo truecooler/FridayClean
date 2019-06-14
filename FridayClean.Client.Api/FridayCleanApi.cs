@@ -109,10 +109,13 @@ namespace FridayClean.Client.Api
 			}
 		}
 
+		/* new metadata creating needed to add header while intercepting.
+		 we are unable to create metadata by intercepter, because header property is readonly */
+
 		public  Task<AuthSendCodeResponse> AuthSendCodeAsync(AuthSendCodeRequest request)
 		{
 			//return await _client.AuthSendCodeAsync(request, headers, deadline, cancellationToken);
-			return CallApiAndRethrowExceptionsAsync(async x => await x.AuthSendCodeAsync(request));
+			return CallApiAndRethrowExceptionsAsync(async x => await x.AuthSendCodeAsync(request,new Metadata()));
 		}
 
 		public AuthSendCodeResponse AuthSendCode(AuthSendCodeRequest request)
@@ -122,24 +125,24 @@ namespace FridayClean.Client.Api
 
 		public Task<AuthValidateCodeResponse> AuthValidateCodeAsync(AuthValidateCodeRequest request)
 		{
-			return CallApiAndRethrowExceptions(async x => await x.AuthValidateCodeAsync(request));
+			return CallApiAndRethrowExceptions(async x => await x.AuthValidateCodeAsync(request, new Metadata()));
 		}
 
 
 		public AuthValidateCodeResponse AuthValidateCode(AuthValidateCodeRequest request)
 		{
-			return CallApiAndRethrowExceptions(x => x.AuthValidateCode(request));
+			return CallApiAndRethrowExceptions(x => x.AuthValidateCode(request, new Metadata()));
 		}
 
 
 		public Task<AuthValidateTokenResponse> AuthValidateTokenAsync(AuthValidateTokenRequest request)
 		{
-			return CallApiAndRethrowExceptions(async x => await x.AuthValidateTokenAsync(request));
+			return CallApiAndRethrowExceptions(async x => await x.AuthValidateTokenAsync(request, new Metadata()));
 		}
 
 		public AuthValidateTokenResponse AuthValidateToken(AuthValidateTokenRequest request)
 		{
-			return CallApiAndRethrowExceptions( x=>x.AuthValidateToken(request));
+			return CallApiAndRethrowExceptions( x=>x.AuthValidateToken(request, new Metadata()));
 		}
 
 		public void Dispose()
