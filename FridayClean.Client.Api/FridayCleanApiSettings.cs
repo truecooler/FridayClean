@@ -25,33 +25,49 @@ namespace FridayClean.Client.Api
 			ChannelOptions = new List<ChannelOption>();
 			Interceptors = new List<Interceptor>();
 		}
+
+		private static FridayCleanApiSettings Default()
+		{
+			
+
+			var settings = new FridayCleanApiSettings()
+			{
+				AccessToken = "loltoken",
+			};
+
+			Action<CallOptions> callback = (CallOptions x) =>
+				x.Headers.Add(Constants.AuthHeaderName, settings.AccessToken);
+
+			settings.Interceptors = new List<Interceptor>() {new AuthInterceptor(callback)};
+
+			return settings;
+		}
+
 		public static FridayCleanApiSettings ProductionDefault()
 		{
+			var settings = Default();
+
 			var options = new List<ChannelOption>
 			{
-				//move ssl creds to ioc
 				new ChannelOption(Grpc.Core.ChannelOptions.SslTargetNameOverride, Utils.Ssl.DefaultHostOverride)
 			};
 
-			var result = new FridayCleanApiSettings()
-			{
-				Host = "fridayclean.thecooler.ru",
-				Port = 443,
-				AccessToken = "loltoken",
-				ChannelOptions = options,
-				ChannelCredentials = Utils.Ssl.CreateSslClientCredentials()
-			};
+			settings.ChannelOptions = options;
+			settings.ChannelCredentials = Utils.Ssl.CreateSslClientCredentials();
 
-			Action<CallOptions> callback = (CallOptions x) => x.Headers.Add(Constants.AuthHeaderName, result.AccessToken);
-
-			result.Interceptors = new List<Interceptor>() {new AuthInterceptor(callback)};
-
-			return result;
+			settings.Host = "fridayclean.thecooler.ru";
+			settings.Port = 443;
+			return settings;
 		}
 
 		public static FridayCleanApiSettings DevelopmentDefault()
 		{
-			return new FridayCleanApiSettings() { Host = "192.168.10.10", Port = 80, AccessToken = "" };
+			var settings = Default();
+			settings.Host = "192.168.10.10";
+			settings.Port = 80;
+			return settings;
 		}
+
 	}
 }
+

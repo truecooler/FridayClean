@@ -58,7 +58,7 @@ namespace FridayClean.Client
 			//containerRegistry.RegisterInstance<IFridayCleanApi>(
 				//new FridayCleanApi(FridayCleanApiSettings.ProductionDefault()));
 
-			containerRegistry.RegisterInstance(FridayCleanApiSettings.ProductionDefault());
+			containerRegistry.RegisterInstance(FridayCleanApiSettings.DevelopmentDefault());
 			containerRegistry.RegisterSingleton<IFridayCleanApi, FridayCleanApi>();
 
 

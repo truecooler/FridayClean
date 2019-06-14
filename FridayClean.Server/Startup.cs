@@ -23,7 +23,7 @@ namespace FridayClean.Server
 		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
 		public void ConfigureServices(IServiceCollection services)
 		{
-			services.AddGrpc().AddServiceOptions<FridayCleanService>(options => options.Interceptors.Add<AuthInterceptor>());
+			services.AddGrpc();//.AddServiceOptions<FridayCleanService>(options => options.Interceptors.Add<AuthInterceptor>());
 			
 			services.AddSingleton<ISmsService, SmscSmsService>();
 			services.AddSingleton<IRestClient, RestClient>();
@@ -38,7 +38,7 @@ namespace FridayClean.Server
 
 			Action<ServerCallContext> callback = (context) =>
 			{
-				logger.LogInformation($"interceptor, {context.RequestHeaders.SingleOrDefault(x=>x.Key==Constants.AuthHeaderName).Value}");
+				//logger.LogInformation($"interceptor!!! {context.RequestHeaders.SingleOrDefault(x=>x.Key==Constants.AuthHeaderName).Value}");
 			};
 
 			services.AddSingleton<AuthInterceptor>(new AuthInterceptor(callback));
