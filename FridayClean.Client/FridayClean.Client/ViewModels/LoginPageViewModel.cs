@@ -14,6 +14,7 @@ using Prism.Navigation;
 using Prism.Services;
 using System.Threading.Tasks;
 using Grpc.Core;
+using FridayClean.Client.Api.Exceptions;
 
 namespace FridayClean.Client.ViewModels
 {
@@ -75,38 +76,49 @@ namespace FridayClean.Client.ViewModels
 
 		public async void OnLoginAsync()
 		{
-			if (!IsWaitingForCode)
+			try
 			{
-				IsBusy = true;
-				var sendCodeResponse = await _api.AuthSendCodeAsync(new AuthSendCodeRequest(){ Phone = Utils.PhoneTrimer(Phone) });
+				if (!IsWaitingForCode)
+				{
+					IsBusy = true;
+					var sendCodeResponse = await _api.AuthSendCodeAsync(new AuthSendCodeRequest()
+						{Phone = Utils.PhoneTrimer(Phone)});
+					IsBusy = false;
+					if (sendCodeResponse.ResponseStatus == AuthSendCodeResponseStatus.InvalidPhone)
+					{
+						CrossToastPopUp.Current.ShowToastError("Ошибка: Вы ввели неправильный номер!");
+						return;
+					}
+
+					if (sendCodeResponse.ResponseStatus == AuthSendCodeResponseStatus.GateWayError)
+					{
+						CrossToastPopUp.Current.ShowToastError(
+							"Ошибка: Смс шлюз времнно недоступен, попробуйте позже.");
+						return;
+					}
+
+					IsWaitingForCode = true;
+					return;
+				}
+
+				int.TryParse(Code, out int code);
+
+				var vadidateCodeResponse = await _api.AuthValidateCodeAsync(new AuthValidateCodeRequest()
+					{AuthCode = code, Phone = Utils.PhoneTrimer(Phone)});
+
+				if (vadidateCodeResponse.ResponseStatus == AuthValidateCodeResponseStatus.InvalidCode)
+				{
+					CrossToastPopUp.Current.ShowToastError("Ошибка: Вы ввели неверный код!", ToastLength.Short);
+					return;
+				}
+
+				await _navigationService.NavigateAsync("/DashboardPage");
+			}
+			catch (GrpcUnavailableException ex)
+			{
+				CrossToastPopUp.Current.ShowToastError($"Ошибка: Невозможно выполнить запрос. ({ex.Message})");
 				IsBusy = false;
-				if (sendCodeResponse.ResponseStatus == AuthSendCodeResponseStatus.InvalidPhone)
-				{
-					CrossToastPopUp.Current.ShowToastMessage("Ошибка: Вы ввели неправильный номер!", ToastLength.Short);
-					return;
-				}
-
-				if (sendCodeResponse.ResponseStatus == AuthSendCodeResponseStatus.GateWayError)
-				{
-					CrossToastPopUp.Current.ShowToastMessage("Ошибка: Смс шлюз времнно недоступен, попробуйте позже.", ToastLength.Short);
-					return;
-				}
-				IsWaitingForCode = true;
-				return;
 			}
-
-			int.TryParse(Code, out int code);
-
-			var vadidateCodeResponse = await _api.AuthValidateCodeAsync(new AuthValidateCodeRequest()
-				{AuthCode = code, Phone = Utils.PhoneTrimer(Phone)});
-
-			if (vadidateCodeResponse.ResponseStatus == AuthValidateCodeResponseStatus.InvalidCode)
-			{
-				CrossToastPopUp.Current.ShowToastWarning("Ошибка: Вы ввели неверный код!", ToastLength.Short);
-				return;
-			}
-
-			await _navigationService.NavigateAsync("/DashboardPage");
 		}
 	}
 }

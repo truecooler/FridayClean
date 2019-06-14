@@ -13,31 +13,41 @@ namespace FridayClean.Common.Helpers
 		{
 			public const string DefaultHostOverride = "foo.test.google.fr";
 
-			public static string ClientCertAuthorityPath
+			private static Assembly GetCurrentAssembly()
 			{
-				get { return GetPath("Certificates/ca.pem"); }
+				return typeof(Ssl).Assembly;
 			}
 
-			public static string ServerCertChainPath
+			private static string ReadCertDataFromResource(string resourceName)
 			{
-				get { return GetPath("Certificates/server1.pem"); }
+				return new StreamReader(GetCurrentAssembly().GetManifestResourceStream(resourceName)).ReadToEnd();
+			}
+			public static string GetClientCertAuthorityData()
+			{
+				return ReadCertDataFromResource("FridayClean.Common.Certificates.ca.pem"); //("Certificates/ca.pem"); 
 			}
 
-			public static string ServerPrivateKeyPath
+			public static string GetServerCertChainData()
 			{
-				get { return GetPath("Certificates/server1.key"); }
+				return ReadCertDataFromResource("FridayClean.Common.Certificates.server1.pem"); //("Certificates/server1.pem"); }
+			}
+
+			public static string GetServerPrivateKeyData()
+			{
+				return ReadCertDataFromResource("FridayClean.Common.Certificates.server1.key");
+				//return GetPath("Certificates/server1.key");
 			}
 
 			public static SslCredentials CreateSslClientCredentials()
 			{
-				return new SslCredentials(File.ReadAllText(ClientCertAuthorityPath));
+				return new SslCredentials(GetClientCertAuthorityData());
 			}
 
 			public static SslServerCredentials CreateSslServerCredentials()
 			{
 				var keyCertPair = new KeyCertificatePair(
-					File.ReadAllText(ServerCertChainPath),
-					File.ReadAllText(ServerPrivateKeyPath));
+					GetServerCertChainData(),
+					GetServerPrivateKeyData());
 				return new SslServerCredentials(new[] {keyCertPair});
 			}
 

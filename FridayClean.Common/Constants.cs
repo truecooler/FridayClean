@@ -6,6 +6,6 @@ namespace FridayClean.Common
 {
 	public static class Constants
 	{
-		public const string AuthHeaderName = "AccessToken";
+		public const string AuthHeaderName = "access-token";
 	}
 }

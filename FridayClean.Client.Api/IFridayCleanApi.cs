@@ -9,22 +9,16 @@ namespace FridayClean.Client.Api
 {
 	public interface IFridayCleanApi : IDisposable
 	{
-		Task<AuthSendCodeResponse> AuthSendCodeAsync(AuthSendCodeRequest request, Metadata headers = null,
-			DateTime? deadline = null, CancellationToken cancellationToken = default);
+		Task<AuthSendCodeResponse> AuthSendCodeAsync(AuthSendCodeRequest request);
 
-		AuthSendCodeResponse AuthSendCode(AuthSendCodeRequest request, Metadata headers = null,
-			DateTime? deadline = null, CancellationToken cancellationToken = default);
+		AuthSendCodeResponse AuthSendCode(AuthSendCodeRequest request);
 
-		Task<AuthValidateCodeResponse> AuthValidateCodeAsync(AuthValidateCodeRequest request, Metadata headers = null,
-			DateTime? deadline = null, CancellationToken cancellationToken = default);
+		Task<AuthValidateCodeResponse> AuthValidateCodeAsync(AuthValidateCodeRequest request);
 
-		AuthValidateCodeResponse AuthValidateCode(AuthValidateCodeRequest request, Metadata headers = null,
-			DateTime? deadline = null, CancellationToken cancellationToken = default);
+		AuthValidateCodeResponse AuthValidateCode(AuthValidateCodeRequest request);
 
-		Task<AuthValidateTokenResponse> AuthValidateTokenAsync(AuthValidateTokenRequest request,
-			Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
+		Task<AuthValidateTokenResponse> AuthValidateTokenAsync(AuthValidateTokenRequest request);
 
-		AuthValidateTokenResponse AuthValidateToken(AuthValidateTokenRequest request, Metadata headers = null,
-			DateTime? deadline = null, CancellationToken cancellationToken = default);
+		AuthValidateTokenResponse AuthValidateToken(AuthValidateTokenRequest request);
 	}
 }

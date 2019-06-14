@@ -28,8 +28,8 @@ namespace FridayClean.Server
 		public async override Task<AuthSendCodeResponse> AuthSendCode(AuthSendCodeRequest request, ServerCallContext context)
 		{
 			var token = context.RequestHeaders.SingleOrDefault(x => x.Key.Contains(Constants.AuthHeaderName))?.Value;
+			_logger.LogInformation($"token: {token??"null"}");
 			int code = new Random().Next(10000,99999);
-			_logger.LogInformation($"code : {code}, token: {token}, headers: {string.Join(',',context.RequestHeaders.Select(x=> $"{x.Key}:{x.Value}"))}");
 			Codes[request.Phone] = code;
 			return new AuthSendCodeResponse()
 			{
