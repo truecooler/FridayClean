@@ -14,7 +14,7 @@ namespace FridayClean.Server
 	{
 		//private ILogger _logger;
 
-		public string PostgresqlConnectionString = "";
+		public string PostgresqlConnectionString = "Server=127.0.0.1;Port=5432;Database=myDataBase;User Id=myUsername;Password=myPassword;";
 
 		public SmsGatewayCredentials SmsGatewayCredentials = new SmsGatewayCredentials();
 
@@ -34,7 +34,7 @@ namespace FridayClean.Server
 		private static void CreateDefault()
 		{
 			var settings = new FridayCleanServiceSettings();
-			File.WriteAllText(PathToFile, JsonConvert.SerializeObject(settings));
+			File.WriteAllText(PathToFile, JsonConvert.SerializeObject(settings, Formatting.Indented));
 		}
 
 		private static FridayCleanServiceSettings Load()
