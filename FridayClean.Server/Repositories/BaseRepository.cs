@@ -19,6 +19,8 @@ namespace FridayClean.Server.Repositories
 		{
 			this._dataContext = context;
 			this._dbset = context.Set<T>();
+
+			_dataContext.Database.EnsureCreated();
 		}
 
 

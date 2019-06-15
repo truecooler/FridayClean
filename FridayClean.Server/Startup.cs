@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FridayClean.Common;
 using FridayClean.Common.Interceptors;
+using FridayClean.Server.Repositories;
 using FridayClean.Server.SmsService;
 using Grpc.AspNetCore.Server;
 using Grpc.Core;
@@ -15,6 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using RestSharp;
+using FridayClean.Server.DataBaseModels;
 
 namespace FridayClean.Server
 {
@@ -31,7 +33,7 @@ namespace FridayClean.Server
 
 			/* very ugly way, don't use in production */
 			var serviceProvider = services.BuildServiceProvider();
-			ILogger<FridayCleanServiceSettings> logger = 
+			ILogger<FridayCleanServiceSettings> logger =
 				(ILogger<FridayCleanServiceSettings>)serviceProvider.GetService(typeof(ILogger<FridayCleanServiceSettings>));
 			var settings = FridayCleanServiceSettings.LoadOrCreateDefault(logger);
 
@@ -39,12 +41,17 @@ namespace FridayClean.Server
 
 			Action<ServerCallContext> callback = (context) =>
 			{
-				logger.LogInformation($"interceptor!!! {context.RequestHeaders.SingleOrDefault(x=>x.Key==Constants.AuthHeaderName).Value}");
+				
 			};
 
 			services.AddSingleton<AuthInterceptor>(new AuthInterceptor(callback));
 
-			services.AddDbContext<DbContext>(options => options.UseNpgsql(settings.PostgresqlConnectionString));
+			services.AddDbContext<DbContext>(options =>
+			{
+				options.UseNpgsql(settings.PostgresqlConnectionString);
+			});
+
+			services.AddSingleton<BaseRepository<User, DbContext>>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

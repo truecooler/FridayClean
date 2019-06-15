@@ -6,6 +6,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using FridayClean.Common;
+using FridayClean.Server.Repositories;
+using Microsoft.EntityFrameworkCore;
+using FridayClean.Server.DataBaseModels;
 
 //using FridayCleanProtocol;
 
@@ -19,10 +22,13 @@ namespace FridayClean.Server
 		private ISmsService _smsService;
 
 		private ILogger _logger;
-		public FridayCleanService(ISmsService smsService, ILogger<FridayCleanService> logger)
+
+		private BaseRepository<User, DbContext> _usersRepository;
+		public FridayCleanService(ISmsService smsService, BaseRepository<User, DbContext> usersRepository, ILogger<FridayCleanService> logger)
 		{
 			_smsService = smsService;
 			_logger = logger;
+			_usersRepository = usersRepository;
 		}
 
 		public async override Task<AuthSendCodeResponse> AuthSendCode(AuthSendCodeRequest request, ServerCallContext context)
@@ -59,6 +65,7 @@ namespace FridayClean.Server
 
 		public override Task<AuthValidateTokenResponse> AuthValidateToken(AuthValidateTokenRequest request, ServerCallContext context)
 		{
+			_usersRepository.Add(new User(){Id=1,Name="Misha",Phone ="2222"});
 			return Task.FromResult(new AuthValidateTokenResponse(){ResponseStatus = request.Token == "some_token" ? AuthValidateTokenResponseStatus.ValidToken : AuthValidateTokenResponseStatus.NotValidToken});
 
 			//ResponseStatus = AuthSendCodeResponseStatus.Ok
