@@ -12,10 +12,10 @@ namespace FridayClean.Server.Repositories
 	where T : class
 	where C : DbContext
 	{
-		protected DbContext _dataContext;
+		protected C _dataContext;
 		private DbSet<T> _dbset;
 
-		public BaseRepository(DbContext context)
+		public BaseRepository(C context)
 		{
 			this._dataContext = context;
 			this._dbset = context.Set<T>();

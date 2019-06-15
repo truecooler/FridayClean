@@ -23,8 +23,8 @@ namespace FridayClean.Server
 
 		private ILogger _logger;
 
-		private BaseRepository<User, DbContext> _usersRepository;
-		public FridayCleanService(ISmsService smsService, BaseRepository<User, DbContext> usersRepository, ILogger<FridayCleanService> logger)
+		private IRepository<User> _usersRepository;
+		public FridayCleanService(ISmsService smsService, IRepository<User> usersRepository, ILogger<FridayCleanService> logger)
 		{
 			_smsService = smsService;
 			_logger = logger;

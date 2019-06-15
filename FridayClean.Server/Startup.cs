@@ -51,7 +51,7 @@ namespace FridayClean.Server
 				options.UseNpgsql(settings.PostgresqlConnectionString);
 			});
 
-			services.AddSingleton<BaseRepository<User, DbContext>>();
+			services.AddScoped<IRepository<User>,BaseRepository<User, DbContext>>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
