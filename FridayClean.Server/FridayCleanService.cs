@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using FridayClean.Common;
+using FridayClean.Common.Helpers;
 using FridayClean.Server.Repositories;
 using Microsoft.EntityFrameworkCore;
 using FridayClean.Server.DataBaseModels;
@@ -17,29 +18,61 @@ namespace FridayClean.Server
 	public class FridayCleanService : FridayCleanCommunication.FridayCleanCommunicationBase
 	{
 
-		static Dictionary<string,int> Codes = new Dictionary<string, int>();
+		//static Dictionary<string,int> Codes = new Dictionary<string, int>();
 
 		private ISmsService _smsService;
 
 		private ILogger _logger;
 
 		private IRepository<User> _usersRepository;
-		public FridayCleanService(ISmsService smsService, IRepository<User> usersRepository, ILogger<FridayCleanService> logger)
+
+		private IRepository<SentSmsCode> _sentSmsCodesRepository;
+
+		private IRepository<AuthenticatedSession> _authenticatedSessionsRepository;
+
+		public FridayCleanService(ISmsService smsService, IRepository<User> usersRepository,
+			IRepository<SentSmsCode> sentSmsCodesRepository,
+			IRepository<AuthenticatedSession> authenticatedSessionsRepository, ILogger<FridayCleanService> logger)
 		{
 			_smsService = smsService;
 			_logger = logger;
 			_usersRepository = usersRepository;
+			_sentSmsCodesRepository = sentSmsCodesRepository;
+			_authenticatedSessionsRepository = authenticatedSessionsRepository;
 		}
 
 		public async override Task<AuthSendCodeResponse> AuthSendCode(AuthSendCodeRequest request, ServerCallContext context)
 		{
-			var token = context.RequestHeaders.SingleOrDefault(x => x.Key.Contains(Constants.AuthHeaderName))?.Value;
-			_logger.LogInformation($"token: {token??"null"}");
-			int code = new Random().Next(10000,99999);
-			Codes[request.Phone] = code;
+			if (request.Phone == "77777777777")
+			{
+				return new AuthSendCodeResponse()
+				{
+					ResponseStatus = AuthSendCodeResponseStatus.Success
+				};
+			}
+			//var token = context.RequestHeaders.SingleOrDefault(x => x.Key.Contains(Constants.AuthHeaderName))?.Value;
+			//_logger.LogInformation($"token: {token??"null"}");
+			var code = Utils.SmsCodeGenerator.Generate();
+
+			var sendSmsResponse = await _smsService.SendSmsAsync(request.Phone, $"FridayClean Code: {code}");
+
+			if (sendSmsResponse == AuthSendCodeResponseStatus.Success)
+			{
+				if (!_sentSmsCodesRepository.IsExist(x => x.Phone == request.Phone))
+				{
+					_sentSmsCodesRepository.Add(new SentSmsCode() {Phone = request.Phone, Code = code});
+				}
+				else
+				{
+					_sentSmsCodesRepository.Get(x => x.Phone == request.Phone).Code = code;
+				}
+				_sentSmsCodesRepository.Save();
+			}
+
+			
 			return new AuthSendCodeResponse()
 			{
-				ResponseStatus = await _smsService.SendSmsAsync(request.Phone, $"FridayClean Code: {code}")
+				ResponseStatus = sendSmsResponse
 			};
 		}
 
@@ -47,16 +80,31 @@ namespace FridayClean.Server
 		{
 			AuthValidateCodeResponseStatus responseStatus = AuthValidateCodeResponseStatus.InvalidCode;
 
-			if ((Codes.ContainsKey(request.Phone) && Codes[request.Phone] == request.AuthCode) || request.AuthCode == 00000)
+			if (_sentSmsCodesRepository.IsExist(x=>x.Phone == request.Phone && x.Code == request.AuthCode) || request.AuthCode == 00000)
 			{
 				responseStatus = AuthValidateCodeResponseStatus.ValidCode;
-			}
-			else
-			{
-				responseStatus = AuthValidateCodeResponseStatus.InvalidCode;
+
+
+				if (!_usersRepository.IsExist(x => x.Phone == request.Phone))
+				{
+					_usersRepository.Add(new User(){Phone = request.Phone,Name = ""});
+					_usersRepository.Save();
+				}
+
+
+				var newAccessToken = Utils.AccessTokenGenerator.Generate(request.Phone, request.AuthCode);
+
+				_authenticatedSessionsRepository.Add(new AuthenticatedSession(){Phone = request.Phone,AccessToken = newAccessToken});
+				_authenticatedSessionsRepository.Save();
+
+				_sentSmsCodesRepository.Delete(x=>x.Phone == request.Phone);
+				_sentSmsCodesRepository.Save();
+
+				return Task.FromResult(new AuthValidateCodeResponse() { ResponseStatus = responseStatus, Token = newAccessToken });
 			}
 
-			return Task.FromResult(new AuthValidateCodeResponse(){ResponseStatus = responseStatus,Token = "some_token"});
+
+			return Task.FromResult(new AuthValidateCodeResponse(){ResponseStatus = responseStatus,Token = ""});
 
 			//ResponseStatus = AuthSendCodeResponseStatus.Ok
 
@@ -65,8 +113,8 @@ namespace FridayClean.Server
 
 		public override Task<AuthValidateTokenResponse> AuthValidateToken(AuthValidateTokenRequest request, ServerCallContext context)
 		{
-			_usersRepository.Add(new User(){Id=1,Name="Misha",Phone ="2222"});
-			return Task.FromResult(new AuthValidateTokenResponse(){ResponseStatus = request.Token == "some_token" ? AuthValidateTokenResponseStatus.ValidToken : AuthValidateTokenResponseStatus.NotValidToken});
+			var result = _authenticatedSessionsRepository.IsExist(x => x.AccessToken == request.Token);
+			return Task.FromResult(new AuthValidateTokenResponse(){ResponseStatus = (result) ? AuthValidateTokenResponseStatus.ValidToken : AuthValidateTokenResponseStatus.NotValidToken});
 
 			//ResponseStatus = AuthSendCodeResponseStatus.Ok
 

@@ -9,6 +9,7 @@ namespace FridayClean.Client.Api
 {
 	public interface IFridayCleanApi : IDisposable
 	{
+		FridayCleanApiSettings Settings { get; }
 		Task<AuthSendCodeResponse> AuthSendCodeAsync(AuthSendCodeRequest request);
 
 		AuthSendCodeResponse AuthSendCode(AuthSendCodeRequest request);

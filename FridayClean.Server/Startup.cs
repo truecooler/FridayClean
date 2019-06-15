@@ -52,6 +52,9 @@ namespace FridayClean.Server
 			});
 
 			services.AddScoped<IRepository<User>, BaseRepository<User, ApplicationDbContext>>();
+			services.AddScoped<IRepository<SentSmsCode>, BaseRepository<SentSmsCode, ApplicationDbContext>>();
+			services.AddScoped<IRepository<AuthenticatedSession>, BaseRepository<AuthenticatedSession, ApplicationDbContext>>();
+
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

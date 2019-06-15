@@ -14,7 +14,9 @@ using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.AppCenter.Push;
 using System.IO;
-using FridayClean.Client.Helpers;
+using FridayClean.Common.Helpers;
+using Xamarin.Essentials;
+using FridayClean.Common;
 //using System.ServiceModel.Internals;
 
 namespace FridayClean.Client
@@ -43,8 +45,9 @@ namespace FridayClean.Client
 			                "ios={Your iOS App secret here}",
 				typeof(Analytics), typeof(Crashes), typeof(Push));
 
-
-			await NavigationService.NavigateAsync(nameof(LoginPage));// + "/" + nameof(NavigationPage) + "/" + nameof(ViewA)
+			await NavigationService
+					.NavigateAsync("/LoginPage"); // + "/" + nameof(NavigationPage) + "/" + nameof(ViewA)
+			
 		}
 
 		protected override void RegisterTypes(IContainerRegistry containerRegistry)

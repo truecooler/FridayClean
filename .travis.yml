@@ -17,3 +17,4 @@ script:
   - dotnet build ./FridayClean.Server
   - dotnet build ./FridayClean.Client.Api
   - dotnet build ./FridayClean.Client.Api.IntegrationTests
+  - dotnet test ./FridayClean.Client.Api.IntegrationTests/FridayClean.Client.Api.IntegrationTests.csproj

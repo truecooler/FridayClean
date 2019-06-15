@@ -4,20 +4,16 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace FridayClean.Server.DataBaseModels
 {
-	//[Table(name:"Users")]
-	public class User
+	//[Table(name: "SentSmsCodes")]
+	public class SentSmsCode
 	{
 		//[Key]
+		//[ForeignKey("User")]
 		public string Phone { get; set; }
-
-		public string Name { get; set; }
-
-		public ICollection<AuthenticatedSession> AuthenticatedSessions { get; set; }
-
-		//public SentSmsCode SentSmsCode { get; set; }
+		public int Code { get; set; }
+		//public User User { get; set; }
 	}
 }

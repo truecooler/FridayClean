@@ -11,7 +11,7 @@ namespace FridayClean.Common.Interceptors
 {
 	public class AuthInterceptor : Interceptor
 	{
-		private ILogger _logger;
+		//private ILogger _logger;
 
 
 		private Action<CallOptions> _clientCallback;

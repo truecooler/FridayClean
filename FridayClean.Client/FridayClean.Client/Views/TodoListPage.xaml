@@ -6,6 +6,7 @@
 	<ContentPage.Content>
 		<StackLayout>
 			<Label Text="Todo list data goes here" HorizontalOptions="Center" VerticalOptions="CenterAndExpand" />
+            <Button Text="Хочу уйти!" Clicked="Button_OnClicked"></Button>
 		</StackLayout>
 	</ContentPage.Content>
 </ContentPage>

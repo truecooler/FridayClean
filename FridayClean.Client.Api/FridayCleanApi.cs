@@ -23,7 +23,7 @@ namespace FridayClean.Client.Api
 
 		private FridayCleanCommunication.FridayCleanCommunicationClient _client;
 
-		public readonly FridayCleanApiSettings Settings;
+		public FridayCleanApiSettings Settings { get; }
 
 		public FridayCleanApi(FridayCleanApiSettings settings)
 		{
@@ -120,12 +120,12 @@ namespace FridayClean.Client.Api
 
 		public AuthSendCodeResponse AuthSendCode(AuthSendCodeRequest request)
 		{
-			return CallApiAndRethrowExceptions(x => x.AuthSendCode(request));
+			return CallApiAndRethrowExceptions(x => x.AuthSendCode(request, new Metadata()));
 		}
 
 		public Task<AuthValidateCodeResponse> AuthValidateCodeAsync(AuthValidateCodeRequest request)
 		{
-			return CallApiAndRethrowExceptions(async x => await x.AuthValidateCodeAsync(request, new Metadata()));
+			return CallApiAndRethrowExceptionsAsync(async x => await x.AuthValidateCodeAsync(request, new Metadata()));
 		}
 
 
@@ -137,7 +137,7 @@ namespace FridayClean.Client.Api
 
 		public Task<AuthValidateTokenResponse> AuthValidateTokenAsync(AuthValidateTokenRequest request)
 		{
-			return CallApiAndRethrowExceptions(async x => await x.AuthValidateTokenAsync(request, new Metadata()));
+			return CallApiAndRethrowExceptionsAsync(async x => await x.AuthValidateTokenAsync(request, new Metadata()));
 		}
 
 		public AuthValidateTokenResponse AuthValidateToken(AuthValidateTokenRequest request)

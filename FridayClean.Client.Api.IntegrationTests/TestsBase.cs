@@ -9,8 +9,8 @@ namespace FridayClean.Client.Api.IntegrationTests
 	public class TestsBase
 	{
 		protected FridayCleanApi _api;
-		protected string _validPhone = "79154013049";
-		protected string _invalidPhone = "79154228013049";
+		protected string _validPhone = "77777777777";
+		protected string _invalidPhone = "09152281239090";
 		protected int _superValidCode = 00000;
 		protected int _InvalidCode = 12345;
 

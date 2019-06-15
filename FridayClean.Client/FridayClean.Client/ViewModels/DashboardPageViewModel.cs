@@ -6,6 +6,7 @@ using System.Windows.Input;
 using Prism.Navigation;
 using Prism.Commands;
 using System.Collections.ObjectModel;
+using FridayClean.Client.Api;
 using FridayClean.Client.Modeles;
 using Xamarin.Forms;
 using FridayClean.Client.Views;
@@ -15,6 +16,8 @@ namespace FridayClean.Client.ViewModels
 	class DashboardPageViewModel : ViewModelBase
 	{
 		private INavigationService _navigationService;
+
+		private IFridayCleanApi _api;
 		public ObservableCollection<DashboardPageMenuItem> MenuItems { get; set; }
 
 		private DashboardPageMenuItem selectedMenuItem;
@@ -25,9 +28,11 @@ namespace FridayClean.Client.ViewModels
 		}
 
 		public DelegateCommand NavigateCommand { get; private set; }
-		public DashboardPageViewModel(INavigationService navigationService) : base(navigationService)
+		public DashboardPageViewModel(IFridayCleanApi api, INavigationService navigationService) : base(navigationService)
 		{
 			_navigationService = navigationService;
+
+			_api = api;
 
 			MenuItems = new ObservableCollection<DashboardPageMenuItem>();
 

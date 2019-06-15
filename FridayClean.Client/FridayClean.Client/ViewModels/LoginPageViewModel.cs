@@ -7,14 +7,16 @@ using System.Windows.Input;
 using Xamarin.Forms;
 using FridayClean.Client.Views;
 using FridayClean.Client.Api;
-using FridayClean.Client.Helpers;
+using FridayClean.Common.Helpers;
 using Plugin.Toast;
 using Plugin.Toast.Abstractions;
 using Prism.Navigation;
 using Prism.Services;
 using System.Threading.Tasks;
-using Grpc.Core;
 using FridayClean.Client.Api.Exceptions;
+
+using Xamarin.Essentials;
+using FridayClean.Common;
 
 namespace FridayClean.Client.ViewModels
 {
@@ -68,10 +70,42 @@ namespace FridayClean.Client.ViewModels
 		public override async void OnNavigatedTo(INavigationParameters parameters)
 		{
 			await Task.Yield();
+			
 			if (Utils.AppCrashHelper.IsCrashLogExists)
 			{
 				await _dialogService.DisplayAlertAsync("Last crash info", Utils.AppCrashHelper.ReadCrashLogFile(), "OK");
 			}
+			IsBusy = true;
+
+			string accessToken = "";
+			try
+			{
+				accessToken = await SecureStorage.GetAsync(Constants.AccessTokenSecureStorageKey);
+			}
+			catch (Exception ex)
+			{
+				CrossToastPopUp.Current.ShowToastError($"Ошибка: Ваш телефон не поддерживает SecureStorage! После перезапуска приложения придется авторизоваться заного. {ex}", ToastLength.Long);
+			}
+
+			
+			if (string.IsNullOrEmpty(accessToken))
+			{
+				IsBusy = false;
+				return;
+			}
+
+			if ((await _api.AuthValidateTokenAsync(new AuthValidateTokenRequest() {Token = accessToken}))
+			    .ResponseStatus == AuthValidateTokenResponseStatus.NotValidToken)
+			{
+				IsBusy = false;
+				CrossToastPopUp.Current.ShowToastError("Токен авторизации истек, авторизуйтесь заного.");
+				return;
+			}
+
+			IsBusy = false;
+			_api.Settings.AccessToken = accessToken;
+			await _navigationService.NavigateAsync("/DashboardPage");
+
 		}
 
 		public async void OnLoginAsync()
@@ -112,9 +146,18 @@ namespace FridayClean.Client.ViewModels
 					return;
 				}
 
+				try
+				{
+					await SecureStorage.SetAsync(Constants.AccessTokenSecureStorageKey, vadidateCodeResponse.Token);
+				}
+				catch (Exception ex)
+				{
+					CrossToastPopUp.Current.ShowToastError($"Ошибка: Ваш телефон не поддерживает SecureStorage! После перезапуска приложения придется авторизоваться заного. {ex}", ToastLength.Long);
+				}
+
 				await _navigationService.NavigateAsync("/DashboardPage");
 			}
-			catch (GrpcUnavailableException ex)
+			catch (GrpcExceptionBase ex)
 			{
 				CrossToastPopUp.Current.ShowToastError($"Ошибка: Невозможно выполнить запрос. ({ex.Message})");
 				IsBusy = false;
