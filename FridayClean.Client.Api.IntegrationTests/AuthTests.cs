@@ -84,5 +84,13 @@ namespace FridayClean.Client.Api.IntegrationTests
 		}
 
 
+		[TestMethod]
+		public void AuthValidateTokenAsync_ValidateToken_InvalidToken()
+		{
+			var response = _api.AuthValidateTokenAsync(new AuthValidateTokenRequest() { Token = "123"}).GetAwaiter().GetResult();
+			Assert.AreEqual(AuthValidateTokenResponseStatus.NotValidToken, response.ResponseStatus);
+		}
+
+
 	}
 }
