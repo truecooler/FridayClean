@@ -32,7 +32,7 @@ namespace FridayClean.Client.Api
 
 			var settings = new FridayCleanApiSettings()
 			{
-				AccessToken = "loltoken",
+				AccessToken = "",
 			};
 
 			Action<CallOptions> callback = (CallOptions x) =>

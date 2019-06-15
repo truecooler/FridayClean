@@ -14,6 +14,8 @@ namespace FridayClean.Server
 	{
 		//private ILogger _logger;
 
+		public string PostgresqlConnectionString;
+
 		public SmsGatewayCredentials SmsGatewayCredentials = new SmsGatewayCredentials();
 
 		public FridayCleanServiceSettings()

@@ -10,6 +10,7 @@ using Grpc.Core;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -39,17 +40,16 @@ namespace FridayClean.Server
 			Action<ServerCallContext> callback = (context) =>
 			{
 				logger.LogInformation($"interceptor!!! {context.RequestHeaders.SingleOrDefault(x=>x.Key==Constants.AuthHeaderName).Value}");
-				logger.LogInformation("test");
-				logger.LogInformation("тест");
 			};
 
 			services.AddSingleton<AuthInterceptor>(new AuthInterceptor(callback));
+
+			services.AddDbContext<DbContext>(options => options.UseNpgsql(settings.PostgresqlConnectionString));
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
 		{
-			loggerFactory.AddFile("fridayclean.service.{Date}.log");
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
