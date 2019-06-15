@@ -46,12 +46,12 @@ namespace FridayClean.Server
 
 			services.AddSingleton<AuthInterceptor>(new AuthInterceptor(callback));
 
-			services.AddDbContext<DbContext>(options =>
+			services.AddDbContext<ApplicationDbContext>(options =>
 			{
 				options.UseNpgsql(settings.PostgresqlConnectionString);
 			});
 
-			services.AddScoped<IRepository<User>,BaseRepository<User, DbContext>>();
+			services.AddScoped<IRepository<User>, BaseRepository<User, ApplicationDbContext>>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
