@@ -21,5 +21,13 @@ namespace FridayClean.Client.Api
 		Task<AuthValidateTokenResponse> AuthValidateTokenAsync(AuthValidateTokenRequest request);
 
 		AuthValidateTokenResponse AuthValidateToken(AuthValidateTokenRequest request);
+
+		Task<GetProfileInfoResponse> GetProfileInfoAsync(GetProfileInfoRequest request);
+
+		GetProfileInfoResponse GetProfileInfo(GetProfileInfoRequest request);
+
+		Task<UserLogoutResponse> UserLogoutAsync(UserLogoutRequest request);
+
+		UserLogoutResponse UserLogout(UserLogoutRequest request);
 	}
 }

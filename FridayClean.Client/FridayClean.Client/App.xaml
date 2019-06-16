@@ -2,7 +2,8 @@
 <prism:PrismApplication xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:prism="clr-namespace:Prism.DryIoc;assembly=Prism.DryIoc.Forms"
-             x:Class="FridayClean.Client.App">
+                        xmlns:converters="clr-namespace:FridayClean.Client.Converters"
+                        x:Class="FridayClean.Client.App">
 
     <Application.Resources>
         <ResourceDictionary>
@@ -11,6 +12,8 @@
             <Style TargetType="NavigationPage">
                 <Setter Property="BarBackgroundColor" Value="{StaticResource FridayCleanBlackColor}" />
             </Style>
+
+            <converters:InverseBoolConverter x:Key="InverseBoolConverter"/>
         </ResourceDictionary>
     </Application.Resources>
     

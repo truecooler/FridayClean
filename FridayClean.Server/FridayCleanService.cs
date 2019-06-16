@@ -47,7 +47,7 @@ namespace FridayClean.Server
 			{
 				return new AuthSendCodeResponse()
 				{
-					ResponseStatus = AuthSendCodeResponseStatus.Success
+					ResponseStatus = AuthSendCodeStatus.Success
 				};
 			}
 			//var token = context.RequestHeaders.SingleOrDefault(x => x.Key.Contains(Constants.AuthHeaderName))?.Value;
@@ -56,7 +56,7 @@ namespace FridayClean.Server
 
 			var sendSmsResponse = await _smsService.SendSmsAsync(request.Phone, $"FridayClean Code: {code}");
 
-			if (sendSmsResponse == AuthSendCodeResponseStatus.Success)
+			if (sendSmsResponse == AuthSendCodeStatus.Success)
 			{
 				if (!_sentSmsCodesRepository.IsExist(x => x.Phone == request.Phone))
 				{
@@ -78,21 +78,21 @@ namespace FridayClean.Server
 
 		public override Task<AuthValidateCodeResponse> AuthValidateCode(AuthValidateCodeRequest request, ServerCallContext context)
 		{
-			AuthValidateCodeResponseStatus responseStatus = AuthValidateCodeResponseStatus.InvalidCode;
+			AuthValidateCodeStatus responseStatus = AuthValidateCodeStatus.InvalidCode;
 
-			if (_sentSmsCodesRepository.IsExist(x=>x.Phone == request.Phone && x.Code == request.AuthCode) || request.AuthCode == 00000)
+			if (_sentSmsCodesRepository.IsExist(x=>x.Phone == request.Phone && x.Code == request.Code) || request.Code == 00000)
 			{
-				responseStatus = AuthValidateCodeResponseStatus.ValidCode;
+				responseStatus = AuthValidateCodeStatus.ValidCode;
 
 
 				if (!_usersRepository.IsExist(x => x.Phone == request.Phone))
 				{
-					_usersRepository.Add(new User(){Phone = request.Phone,Name = ""});
+					_usersRepository.Add(new User(){Phone = request.Phone,Name = "",Address = ""});
 					_usersRepository.Save();
 				}
 
 
-				var newAccessToken = Utils.AccessTokenGenerator.Generate(request.Phone, request.AuthCode);
+				var newAccessToken = Utils.AccessTokenGenerator.Generate(request.Phone, request.Code);
 
 				_authenticatedSessionsRepository.Add(new AuthenticatedSession(){Phone = request.Phone,AccessToken = newAccessToken});
 				_authenticatedSessionsRepository.Save();
@@ -100,24 +100,52 @@ namespace FridayClean.Server
 				_sentSmsCodesRepository.Delete(x=>x.Phone == request.Phone);
 				_sentSmsCodesRepository.Save();
 
-				return Task.FromResult(new AuthValidateCodeResponse() { ResponseStatus = responseStatus, Token = newAccessToken });
+				return Task.FromResult(new AuthValidateCodeResponse() { ResponseStatus = responseStatus, AccessToken = newAccessToken });
 			}
 
 
-			return Task.FromResult(new AuthValidateCodeResponse(){ResponseStatus = responseStatus,Token = ""});
-
-			//ResponseStatus = AuthSendCodeResponseStatus.Ok
-
+			return Task.FromResult(new AuthValidateCodeResponse(){ResponseStatus = responseStatus,AccessToken = ""});
 		}
 
 
 		public override Task<AuthValidateTokenResponse> AuthValidateToken(AuthValidateTokenRequest request, ServerCallContext context)
 		{
-			var result = _authenticatedSessionsRepository.IsExist(x => x.AccessToken == request.Token);
-			return Task.FromResult(new AuthValidateTokenResponse(){ResponseStatus = (result) ? AuthValidateTokenResponseStatus.ValidToken : AuthValidateTokenResponseStatus.NotValidToken});
+			var result = _authenticatedSessionsRepository.IsExist(x => x.AccessToken == request.AccessToken);
+			return Task.FromResult(new AuthValidateTokenResponse(){ResponseStatus = (result) ? AuthValidateTokenStatus.ValidToken : AuthValidateTokenStatus.InvalidToken});
+		}
 
-			//ResponseStatus = AuthSendCodeResponseStatus.Ok
 
+		private string GetPhoneFromContext(ServerCallContext context)
+		{
+			string phone = context.RequestHeaders.SingleOrDefault(x => x.Key == Constants.UserPhoneHeaderName)?.Value;
+			return !string.IsNullOrEmpty(phone)
+				? phone
+				: throw new ApplicationException("Fatal: user's phone wall null or empty");
+		}
+
+		private string GetAccessTokenFromContext(ServerCallContext context)
+		{
+			return context.RequestHeaders.SingleOrDefault(x => x.Key == Constants.AuthHeaderName)?.Value;
+		}
+
+		public override Task<GetProfileInfoResponse> GetProfileInfo(GetProfileInfoRequest request, ServerCallContext context)
+		{
+			string phone = GetPhoneFromContext(context);
+
+			var user = _usersRepository.Get(x => x.Phone == phone);
+			string name = user?.Name;
+			string address = user?.Address;
+			var response = new GetProfileInfoResponse() {Name = name, Address = address};
+			return Task.FromResult(response);
+		}
+
+
+		public override Task<UserLogoutResponse> UserLogout(UserLogoutRequest request, ServerCallContext context)
+		{
+			var accessToken = GetAccessTokenFromContext(context);
+			_authenticatedSessionsRepository.Delete(x => x.AccessToken == accessToken);
+			_authenticatedSessionsRepository.Save();
+			return Task.FromResult(new UserLogoutResponse(){ResponseStatus = UserLogoutStatus.LogoutSuccess});
 		}
 
 	}

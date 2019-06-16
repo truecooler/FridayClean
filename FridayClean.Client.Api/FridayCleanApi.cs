@@ -149,5 +149,25 @@ namespace FridayClean.Client.Api
 		{
 			_channel.ShutdownAsync().Wait();
 		}
+
+		public Task<GetProfileInfoResponse> GetProfileInfoAsync(GetProfileInfoRequest request)
+		{
+			return CallApiAndRethrowExceptionsAsync(async x => await x.GetProfileInfoAsync(request, new Metadata()));
+		}
+
+		public GetProfileInfoResponse GetProfileInfo(GetProfileInfoRequest request)
+		{
+			return CallApiAndRethrowExceptions(x => x.GetProfileInfo(request, new Metadata()));
+		}
+
+		public Task<UserLogoutResponse> UserLogoutAsync(UserLogoutRequest request)
+		{
+			return CallApiAndRethrowExceptionsAsync(async x => await x.UserLogoutAsync(request, new Metadata()));
+		}
+
+		public UserLogoutResponse UserLogout(UserLogoutRequest request)
+		{
+			return CallApiAndRethrowExceptions(x => x.UserLogout(request, new Metadata()));
+		}
 	}
 }

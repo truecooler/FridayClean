@@ -42,12 +42,12 @@ namespace FridayClean.Server.SmsService
 			_restClient.BaseUrl = new Uri("https://smsc.ru/");
 
 		}
-		public AuthSendCodeResponseStatus SendSms(string number, string message)
+		public AuthSendCodeStatus SendSms(string number, string message)
 		{
 			return this.SendSmsAsync(number,message).GetAwaiter().GetResult();
 		}
 
-		public async Task<AuthSendCodeResponseStatus> SendSmsAsync(string number, string message)
+		public async Task<AuthSendCodeStatus> SendSmsAsync(string number, string message)
 		{
 			
 			var request = new RestRequest("sys/send.php", Method.GET);
@@ -64,12 +64,12 @@ namespace FridayClean.Server.SmsService
 
 			if (response.ResponseStatus != ResponseStatus.Completed)
 			{
-				return AuthSendCodeResponseStatus.GateWayError;
+				return AuthSendCodeStatus.GateWayError;
 			}
 
 			if (response.StatusCode != HttpStatusCode.OK)
 			{
-				return AuthSendCodeResponseStatus.GateWayError;
+				return AuthSendCodeStatus.GateWayError;
 			}
 
 			SmscSmsServiceResponse json = response.Data;
@@ -78,15 +78,15 @@ namespace FridayClean.Server.SmsService
 
 			if (json.ErrorCode == (int)SmsGatewayErrorCodes.InvalidPhone)
 			{
-				return AuthSendCodeResponseStatus.InvalidPhone;
+				return AuthSendCodeStatus.InvalidPhone;
 			}
 
 			if (json.ErrorCode != (int)SmsGatewayErrorCodes.NotAnError)
 			{
-				return AuthSendCodeResponseStatus.GateWayError;
+				return AuthSendCodeStatus.GateWayError;
 			}
 
-			return AuthSendCodeResponseStatus.Success;
+			return AuthSendCodeStatus.Success;
 		}
 	}
 }

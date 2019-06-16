@@ -6,6 +6,8 @@ service FridayCleanCommunication {
 	rpc AuthSendCode (AuthSendCodeRequest) returns (AuthSendCodeResponse) {}
 	rpc AuthValidateCode (AuthValidateCodeRequest) returns (AuthValidateCodeResponse) {}
 	rpc AuthValidateToken (AuthValidateTokenRequest) returns (AuthValidateTokenResponse) {}
+	rpc GetProfileInfo (GetProfileInfoRequest) returns (GetProfileInfoResponse) {}
+	rpc UserLogout (UserLogoutRequest) returns (UserLogoutResponse) {}
 }
 
 
@@ -14,14 +16,14 @@ message AuthSendCodeRequest {
 	string Phone = 1;
 }
 
-enum AuthSendCodeResponseStatus {
+enum AuthSendCodeStatus {
 	Success = 0;
 	InvalidPhone = 1;
 	GateWayError = 2;
 }
 
 message AuthSendCodeResponse {
-	AuthSendCodeResponseStatus ResponseStatus = 1;
+	AuthSendCodeStatus ResponseStatus = 1;
 	string ErrorMessage = 2;
 }
 
@@ -29,30 +31,53 @@ message AuthSendCodeResponse {
 
 message AuthValidateCodeRequest {
 	string Phone = 1;
-	int32 AuthCode = 2;
+	int32 Code = 2;
 }
 
-enum AuthValidateCodeResponseStatus {
+enum AuthValidateCodeStatus {
 	ValidCode = 0;
 	InvalidCode = 1;
 }
 
 message AuthValidateCodeResponse {
-	AuthValidateCodeResponseStatus ResponseStatus = 1;
-	string Token = 2;
+	AuthValidateCodeStatus ResponseStatus = 1;
+	string AccessToken = 2;
 }
 
 
 
 message AuthValidateTokenRequest {
-	string Token = 2;
+	string AccessToken = 2;
 }
 
-enum AuthValidateTokenResponseStatus {
+enum AuthValidateTokenStatus {
 	ValidToken = 0;
-	NotValidToken = 1;
+	InvalidToken = 1;
 }
 
 message AuthValidateTokenResponse {
-	AuthValidateTokenResponseStatus ResponseStatus = 1;
+	AuthValidateTokenStatus ResponseStatus = 1;
+}
+
+message GetProfileInfoRequest {
+
+}
+
+message GetProfileInfoResponse {
+	string Name = 1;
+	string Address = 2;
+}
+
+message UserLogoutRequest {
+
+}
+
+enum UserLogoutStatus
+{
+	LogoutSuccess = 0;
+	LogoutError = 1;
+}
+
+message UserLogoutResponse {
+	UserLogoutStatus ResponseStatus = 1;
 }

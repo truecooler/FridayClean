@@ -33,18 +33,13 @@ namespace FridayClean.Server
 
 			/* very ugly way, don't use in production */
 			var serviceProvider = services.BuildServiceProvider();
-			ILogger<FridayCleanServiceSettings> logger =
-				(ILogger<FridayCleanServiceSettings>)serviceProvider.GetService(typeof(ILogger<FridayCleanServiceSettings>));
+			var logger =
+				serviceProvider.GetService(typeof(ILogger<FridayCleanServiceSettings>)) 
+					as ILogger<FridayCleanServiceSettings>;
 			var settings = FridayCleanServiceSettings.LoadOrCreateDefault(logger);
 
 			services.AddSingleton<FridayCleanServiceSettings>(settings);
 
-			Action<ServerCallContext> callback = (context) =>
-			{
-				
-			};
-
-			services.AddSingleton<AuthInterceptor>(new AuthInterceptor(callback));
 
 			services.AddDbContext<ApplicationDbContext>(options =>
 			{
@@ -54,6 +49,47 @@ namespace FridayClean.Server
 			services.AddScoped<IRepository<User>, BaseRepository<User, ApplicationDbContext>>();
 			services.AddScoped<IRepository<SentSmsCode>, BaseRepository<SentSmsCode, ApplicationDbContext>>();
 			services.AddScoped<IRepository<AuthenticatedSession>, BaseRepository<AuthenticatedSession, ApplicationDbContext>>();
+			serviceProvider = services.BuildServiceProvider();
+
+			var dbcontext = serviceProvider.GetService(typeof(ApplicationDbContext)) as ApplicationDbContext;
+			dbcontext.Database.EnsureCreated();
+			
+
+			var authenticatedSessionsRepository = (IRepository<AuthenticatedSession>)serviceProvider.GetService(typeof(IRepository<AuthenticatedSession>));
+
+			Action<ServerCallContext> callback = (context) =>
+			{
+				if (context.Method.StartsWith("/FridayClean.FridayCleanCommunication/Auth"))
+				{
+					return;
+				}
+
+				var accessToken = context.RequestHeaders.SingleOrDefault(x => x.Key == Constants.AuthHeaderName)?.Value;
+
+				if (string.IsNullOrEmpty(accessToken))
+				{
+					throw new RpcException(new Status(StatusCode.Unauthenticated,"This rpc method requires access token."));
+				}
+
+				if (!authenticatedSessionsRepository.IsExist(x => x.AccessToken == accessToken))
+				{
+					throw new RpcException(new Status(StatusCode.Unauthenticated, "Provided access token not exists or expired."));
+				}
+
+				var phone = authenticatedSessionsRepository.Get(x => x.AccessToken == accessToken)?.Phone;
+
+				if (string.IsNullOrEmpty(phone))
+				{
+					throw new ApplicationException("Fatal: user auth session exists, but phone doesn't.");
+				}
+
+				context.RequestHeaders.Add(Constants.UserPhoneHeaderName,phone);
+
+			};
+
+			services.AddSingleton<AuthInterceptor>(new AuthInterceptor(callback));
+
+			
 
 		}
 

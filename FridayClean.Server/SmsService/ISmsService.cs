@@ -7,7 +7,7 @@ namespace FridayClean.Server.SmsService
 {
 	public interface ISmsService
 	{
-		AuthSendCodeResponseStatus SendSms(string number, string message);
-		Task<AuthSendCodeResponseStatus> SendSmsAsync(string number, string message);
+		AuthSendCodeStatus SendSms(string number, string message);
+		Task<AuthSendCodeStatus> SendSmsAsync(string number, string message);
 	}
 }

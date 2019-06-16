@@ -17,6 +17,7 @@ using FridayClean.Client.Api.Exceptions;
 
 using Xamarin.Essentials;
 using FridayClean.Common;
+using Prism.Commands;
 
 namespace FridayClean.Client.ViewModels
 {
@@ -55,7 +56,7 @@ namespace FridayClean.Client.ViewModels
 			get => _code;
 			set => SetProperty(ref _code, value);
 		}
-		public ICommand LoginCommand { protected set; get; }
+		public DelegateCommand LoginCommand { protected set; get; }
 		public LoginPageViewModel(INavigationService navigationService,
 			IPageDialogService dialogService, IFridayCleanApi api) : base(navigationService)
 		{
@@ -64,7 +65,7 @@ namespace FridayClean.Client.ViewModels
 			_dialogService = dialogService;
 			_api = api;
 			_navigationService = navigationService;
-			LoginCommand = new Command(OnLoginAsync,()=>false);
+			LoginCommand = new DelegateCommand(OnLoginAsync,()=>false);
 		}
 
 		public override async void OnNavigatedTo(INavigationParameters parameters)
@@ -84,7 +85,7 @@ namespace FridayClean.Client.ViewModels
 			}
 			catch (Exception ex)
 			{
-				CrossToastPopUp.Current.ShowToastError($"Ошибка: Ваш телефон не поддерживает SecureStorage! После перезапуска приложения придется авторизоваться заного. {ex}", ToastLength.Long);
+				CrossToastPopUp.Current.ShowToastError($"{Constants.Messages.SecureStorageNotSupportedMessage} ({ex})", ToastLength.Long);
 			}
 
 			
@@ -94,21 +95,30 @@ namespace FridayClean.Client.ViewModels
 				return;
 			}
 
-			if ((await _api.AuthValidateTokenAsync(new AuthValidateTokenRequest() {Token = accessToken}))
-			    .ResponseStatus == AuthValidateTokenResponseStatus.NotValidToken)
+			try
+			{
+				if ((await _api.AuthValidateTokenAsync(new AuthValidateTokenRequest() {AccessToken = accessToken}))
+				    .ResponseStatus == AuthValidateTokenStatus.InvalidToken)
+				{
+					IsBusy = false;
+					CrossToastPopUp.Current.ShowToastError("Токен авторизации истек, авторизуйтесь заного.");
+					return;
+				}
+			}
+			catch (GrpcExceptionBase ex)
 			{
 				IsBusy = false;
-				CrossToastPopUp.Current.ShowToastError("Токен авторизации истек, авторизуйтесь заного.");
+				CrossToastPopUp.Current.ShowToastError($"Невозможно подтвердить вашу сессию, сервер временно недоступен, попробуйте позже. {ex.Message}");
 				return;
 			}
 
 			IsBusy = false;
 			_api.Settings.AccessToken = accessToken;
-			await _navigationService.NavigateAsync("/DashboardPage");
+			await _navigationService.NavigateAsync($"/DashboardPage/NavigationPage/ProfilePage");
 
 		}
 
-		public async void OnLoginAsync()
+		private async void OnLoginAsync()
 		{
 			IsBusy = true;
 			try
@@ -119,13 +129,13 @@ namespace FridayClean.Client.ViewModels
 					var sendCodeResponse = await _api.AuthSendCodeAsync(new AuthSendCodeRequest()
 						{Phone = Utils.PhoneTrimer(Phone)});
 					IsBusy = false;
-					if (sendCodeResponse.ResponseStatus == AuthSendCodeResponseStatus.InvalidPhone)
+					if (sendCodeResponse.ResponseStatus == AuthSendCodeStatus.InvalidPhone)
 					{
 						CrossToastPopUp.Current.ShowToastError("Ошибка: Вы ввели неправильный номер!");
 						return;
 					}
 
-					if (sendCodeResponse.ResponseStatus == AuthSendCodeResponseStatus.GateWayError)
+					if (sendCodeResponse.ResponseStatus == AuthSendCodeStatus.GateWayError)
 					{
 						CrossToastPopUp.Current.ShowToastError(
 							"Ошибка: Смс шлюз времнно недоступен, попробуйте позже.");
@@ -139,29 +149,31 @@ namespace FridayClean.Client.ViewModels
 				int.TryParse(Code, out int code);
 				
 				var vadidateCodeResponse = await _api.AuthValidateCodeAsync(new AuthValidateCodeRequest()
-					{AuthCode = code, Phone = Utils.PhoneTrimer(Phone)});
+					{Code = code, Phone = Utils.PhoneTrimer(Phone)});
 
-				if (vadidateCodeResponse.ResponseStatus == AuthValidateCodeResponseStatus.InvalidCode)
+				if (vadidateCodeResponse.ResponseStatus == AuthValidateCodeStatus.InvalidCode)
 				{
 					CrossToastPopUp.Current.ShowToastError("Ошибка: Вы ввели неверный код!", ToastLength.Short);
 					IsBusy = false;
 					return;
 				}
 
+				_api.Settings.AccessToken = vadidateCodeResponse.AccessToken;
+
 				try
 				{
-					await SecureStorage.SetAsync(Constants.AccessTokenSecureStorageKey, vadidateCodeResponse.Token);
+					await SecureStorage.SetAsync(Constants.AccessTokenSecureStorageKey, vadidateCodeResponse.AccessToken);
 				}
 				catch (Exception ex)
 				{
-					CrossToastPopUp.Current.ShowToastError($"Ошибка: Ваш телефон не поддерживает SecureStorage! После перезапуска приложения придется авторизоваться заного. {ex}", ToastLength.Long);
+					CrossToastPopUp.Current.ShowToastError($"{Constants.Messages.SecureStorageNotSupportedMessage} ({ex.Message})", ToastLength.Long);
 				}
 
-				await _navigationService.NavigateAsync("/DashboardPage");
+				await _navigationService.NavigateAsync("/DashboardPage/NavigationPage/ProfilePage");
 			}
 			catch (GrpcExceptionBase ex)
 			{
-				CrossToastPopUp.Current.ShowToastError($"Ошибка: Невозможно выполнить запрос. ({ex.Message})");
+				CrossToastPopUp.Current.ShowToastError($"{Constants.Messages.UnableToCallRpcMessage} ({ex.Message})");
 			}
 			IsBusy = false;
 		}

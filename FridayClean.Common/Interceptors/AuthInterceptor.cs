@@ -39,7 +39,6 @@ namespace FridayClean.Common.Interceptors
 			AsyncUnaryCallContinuation<TRequest, TResponse> continuation)
 		{
 			_clientCallback(context.Options);
-			//context.Options.Headers.Add(Constants.AuthHeaderName, "token!!");
 			return continuation(request, context);
 		}
 

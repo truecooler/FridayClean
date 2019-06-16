@@ -16,6 +16,8 @@ namespace FridayClean.Server.DataBaseModels
 
 		public string Name { get; set; }
 
+		public string Address { get; set; }
+
 		public ICollection<AuthenticatedSession> AuthenticatedSessions { get; set; }
 
 		//public SentSmsCode SentSmsCode { get; set; }

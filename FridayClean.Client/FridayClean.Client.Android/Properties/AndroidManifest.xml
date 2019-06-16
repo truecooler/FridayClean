@@ -1,5 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1" android:versionName="1.0" package="com.companyname.FridayClean.Client">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1" android:versionName="1.0" package="com.TheCooler.FridayClean.Client" android:installLocation="auto">
 	<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="28" />
-	<application android:label="FridayClean.Client.Android"></application>
+	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+	<application android:label="FridayClean.Client.Android" android:icon="@drawable/broom_logo"></application>
 </manifest>

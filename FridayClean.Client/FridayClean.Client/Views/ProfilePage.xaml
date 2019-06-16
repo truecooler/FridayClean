@@ -2,10 +2,33 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
 			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
 			 x:Class="FridayClean.Client.Views.ProfilePage"
+             xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
+             prism:ViewModelLocator.AutowireViewModel="True"
 			 Title="Профиль">
 	<ContentPage.Content>
-		<StackLayout>
-			<Label Text="Профиль data goes here" HorizontalOptions="Center" VerticalOptions="CenterAndExpand" />
+		<StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+            <ActivityIndicator 
+                IsRunning="{Binding IsBusy}"  
+                IsEnabled="{Binding IsBusy}"  
+                IsVisible="true"  
+                Color="{StaticResource FridayCleanBlackColor}"  
+                BackgroundColor="Transparent"/>
+
+
+            <StackLayout IsVisible="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}">
+
+                <Image HorizontalOptions="Center" HeightRequest="300" WidthRequest="300" Source="avatar.jpg" />
+
+                <Label Text="{Binding ProfileName, StringFormat='Приветствуем вас, {0}'}"
+                       HorizontalOptions="Center" VerticalOptions="CenterAndExpand" />
+
+                <Label Text="{Binding ProfileAddress, StringFormat='Выбранный вами адрес: {0}'}"
+                       HorizontalOptions="Center" VerticalOptions="CenterAndExpand"/>
+
+                <Button Text="Редактировать профиль" Command="{Binding EditProfileCommand}"></Button>
+                <Button Text="Выйти из аккаунта" Command="{Binding LogoutCommand}"></Button>
+            </StackLayout>
+
 		</StackLayout>
 	</ContentPage.Content>
 </ContentPage>

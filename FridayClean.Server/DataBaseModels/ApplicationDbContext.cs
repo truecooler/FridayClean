@@ -32,6 +32,7 @@ namespace FridayClean.Server.DataBaseModels
 					.OnDelete(DeleteBehavior.Cascade);
 				//.HasForeignKey<SentSmsCode>(z => z.Phone);
 				builder.HasKey(o => o.Phone);
+				//builder.Property(x => x.Address).IsRequired();
 			}
 		}
 

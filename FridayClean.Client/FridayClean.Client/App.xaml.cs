@@ -65,6 +65,7 @@ namespace FridayClean.Client
 			containerRegistry.RegisterSingleton<IFridayCleanApi, FridayCleanApi>();
 
 
+			containerRegistry.RegisterForNavigation<EditProfilePage, EditProfilePageViewModel>();
 		}
 	}
 }
