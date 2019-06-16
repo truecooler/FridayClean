@@ -9,17 +9,18 @@
                   x:Class="FridayClean.Client.Views.DashboardPage">
   <MasterDetailPage.Master>
         <NavigationPage Title="Menu" 
-                        Icon="ic_hamburger.png">
+                        Icon="broom.png">
 
             <x:Arguments>
-                <ContentPage Title="My App">
+                <ContentPage Title="Меню">
 
                     <ListView ItemsSource="{Binding MenuItems}"
                               SelectedItem="{Binding SelectedMenuItem}"
                               SeparatorColor="LightGray"
                               RowHeight="60"
                               SeparatorVisibility="Default"
-                              BackgroundColor="#e8e8e8">
+                              BackgroundColor="White">
+                        <!--e8e8e8-->
 
                         <ListView.ItemTemplate>
                             <DataTemplate>
@@ -56,7 +57,7 @@
         </NavigationPage>
     </MasterDetailPage.Master>
 	<MasterDetailPage.Detail>
-		<NavigationPage>
+		<NavigationPage BarBackgroundColor="{StaticResource FridayCleanBlackColor}">
 			<x:Arguments>
                 <ContentPage>
                     </ContentPage>

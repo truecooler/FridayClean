@@ -11,7 +11,7 @@ namespace FridayClean.Client.Api.IntegrationTests
 		[TestInitialize]
 		public void TestInitialize()
 		{
-			_api = new FridayCleanApi(FridayCleanApiSettings.DevelopmentDefault());
+			_api = new FridayCleanApi(FridayCleanApiSettings.ProductionDefault());
 		}
 
 		[TestCleanup]

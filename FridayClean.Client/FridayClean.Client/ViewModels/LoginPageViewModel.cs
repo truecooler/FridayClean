@@ -110,11 +110,12 @@ namespace FridayClean.Client.ViewModels
 
 		public async void OnLoginAsync()
 		{
+			IsBusy = true;
 			try
 			{
+				
 				if (!IsWaitingForCode)
 				{
-					IsBusy = true;
 					var sendCodeResponse = await _api.AuthSendCodeAsync(new AuthSendCodeRequest()
 						{Phone = Utils.PhoneTrimer(Phone)});
 					IsBusy = false;
@@ -136,13 +137,14 @@ namespace FridayClean.Client.ViewModels
 				}
 
 				int.TryParse(Code, out int code);
-
+				
 				var vadidateCodeResponse = await _api.AuthValidateCodeAsync(new AuthValidateCodeRequest()
 					{AuthCode = code, Phone = Utils.PhoneTrimer(Phone)});
 
 				if (vadidateCodeResponse.ResponseStatus == AuthValidateCodeResponseStatus.InvalidCode)
 				{
 					CrossToastPopUp.Current.ShowToastError("Ошибка: Вы ввели неверный код!", ToastLength.Short);
+					IsBusy = false;
 					return;
 				}
 
@@ -160,8 +162,8 @@ namespace FridayClean.Client.ViewModels
 			catch (GrpcExceptionBase ex)
 			{
 				CrossToastPopUp.Current.ShowToastError($"Ошибка: Невозможно выполнить запрос. ({ex.Message})");
-				IsBusy = false;
 			}
+			IsBusy = false;
 		}
 	}
 }

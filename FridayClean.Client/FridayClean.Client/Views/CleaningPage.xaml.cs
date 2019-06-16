@@ -2,9 +2,9 @@
 
 namespace FridayClean.Client.Views
 {
-	public partial class ContactsPage : ContentPage
+	public partial class CleaningPage : ContentPage
 	{
-		public ContactsPage ()
+		public CleaningPage()
 		{
 			InitializeComponent ();
 		}

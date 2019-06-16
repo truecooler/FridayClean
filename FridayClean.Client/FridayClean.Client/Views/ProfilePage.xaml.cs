@@ -2,9 +2,9 @@
 
 namespace FridayClean.Client.Views
 {
-	public partial class ReminderPage : ContentPage
+	public partial class ProfilePage : ContentPage
 	{
-		public ReminderPage ()
+		public ProfilePage()
 		{
 			InitializeComponent ();
 		}

@@ -8,6 +8,9 @@
         <ResourceDictionary>
             <Color x:Key="FridayCleanBlackColor">#3e3e3e</Color>
 
+            <Style TargetType="NavigationPage">
+                <Setter Property="BarBackgroundColor" Value="{StaticResource FridayCleanBlackColor}" />
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
     

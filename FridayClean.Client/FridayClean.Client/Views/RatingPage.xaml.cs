@@ -7,10 +7,10 @@ using Prism.Services;
 
 namespace FridayClean.Client.Views
 {
-	public partial class TodoListPage : ContentPage
+	public partial class RatingPage : ContentPage
 	{
 
-		public TodoListPage ()
+		public RatingPage()
 		{
 			InitializeComponent ();
 		}

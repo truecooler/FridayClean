@@ -38,23 +38,23 @@ namespace FridayClean.Client.ViewModels
 
 			MenuItems.Add(new DashboardPageMenuItem()
 			{
-				Icon = "ic_viewa",
-				PageName = nameof(ContactsPage),
-				Title = "ContactsPage"
+				Icon = "profile_logo.png",
+				PageName = nameof(ProfilePage),
+				Title = "Профиль"
 			});
 
 			MenuItems.Add(new DashboardPageMenuItem()
 			{
-				Icon = "ic_viewb",
-				PageName = nameof(ReminderPage),
-				Title = "ReminderPage"
+				Icon = "broom_logo.png",
+				PageName = nameof(CleaningPage),
+				Title = "Уборки"
 			});
 
 			MenuItems.Add(new DashboardPageMenuItem()
 			{
-				Icon = "ic_viewb",
-				PageName = nameof(TodoListPage),
-				Title = "TodoListPage"
+				Icon = "rating_logo.png",
+				PageName = nameof(RatingPage),
+				Title = "Рейтинг"
 			});
 
 			NavigateCommand = new DelegateCommand(Navigate);
