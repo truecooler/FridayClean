@@ -7,6 +7,7 @@ service FridayCleanCommunication {
 	rpc AuthValidateCode (AuthValidateCodeRequest) returns (AuthValidateCodeResponse) {}
 	rpc AuthValidateToken (AuthValidateTokenRequest) returns (AuthValidateTokenResponse) {}
 	rpc GetProfileInfo (GetProfileInfoRequest) returns (GetProfileInfoResponse) {}
+	rpc SetProfileInfo (SetProfileInfoRequest) returns (SetProfileInfoResponse) {}
 	rpc UserLogout (UserLogoutRequest) returns (UserLogoutResponse) {}
 }
 
@@ -67,6 +68,24 @@ message GetProfileInfoResponse {
 	string Name = 1;
 	string Address = 2;
 }
+
+
+message SetProfileInfoRequest {
+	string Name = 1;
+	string Address = 2;
+}
+
+enum SetProfileInfoStatus
+{
+	SetSuccessfully = 0;
+	SetFailed = 1;
+}
+
+message SetProfileInfoResponse {
+	SetProfileInfoStatus ResponseStatus = 1;
+}
+
+
 
 message UserLogoutRequest {
 

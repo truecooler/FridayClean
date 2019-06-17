@@ -46,7 +46,9 @@ namespace FridayClean.Client.ViewModels
 
 		private async void OnEditProfileCommand()
 		{
-			await _navigationService.NavigateAsync("EditProfilePage");
+			var parameters = new NavigationParameters();
+			parameters.Add("_profileInfo", _profileInfo);
+			await _navigationService.NavigateAsync("EditProfilePage", parameters);
 		}
 
 		private async void OnLogoutCommand()
@@ -83,7 +85,6 @@ namespace FridayClean.Client.ViewModels
 
 		public override async void OnNavigatedTo(INavigationParameters parameters)
 		{
-
 			IsBusy = true;
 
 			try
@@ -96,13 +97,8 @@ namespace FridayClean.Client.ViewModels
 			{
 				CrossToastPopUp.Current.ShowToastError($"{Constants.Messages.UnableToCallRpcMessage} ({ex.Message})");
 			}
-			
-
-
 
 			IsBusy = false;
-
-
 		}
 	}
 }

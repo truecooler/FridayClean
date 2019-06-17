@@ -26,6 +26,10 @@ namespace FridayClean.Client.Api
 
 		GetProfileInfoResponse GetProfileInfo(GetProfileInfoRequest request);
 
+		Task<SetProfileInfoResponse> SetProfileInfoAsync(SetProfileInfoRequest request);
+
+		SetProfileInfoResponse SetProfileInfo(SetProfileInfoRequest request);
+
 		Task<UserLogoutResponse> UserLogoutAsync(UserLogoutRequest request);
 
 		UserLogoutResponse UserLogout(UserLogoutRequest request);

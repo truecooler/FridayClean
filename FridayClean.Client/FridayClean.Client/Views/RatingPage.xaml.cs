@@ -15,11 +15,6 @@ namespace FridayClean.Client.Views
 			InitializeComponent ();
 		}
 
-		private void Button_OnClicked(object sender, EventArgs e)
-		{
-			SecureStorage.Remove(Constants.AccessTokenSecureStorageKey);
-			Environment.Exit(0);
-		}
 	}
 }
 

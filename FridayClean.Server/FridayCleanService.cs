@@ -148,6 +148,17 @@ namespace FridayClean.Server
 			return Task.FromResult(new UserLogoutResponse(){ResponseStatus = UserLogoutStatus.LogoutSuccess});
 		}
 
+		public override Task<SetProfileInfoResponse> SetProfileInfo(SetProfileInfoRequest request, ServerCallContext context)
+		{
+			var phone = GetPhoneFromContext(context);
+			var user = _usersRepository.Get(x => x.Phone == phone);
+			user.Name = request.Name;
+			user.Address = request.Address;
+			_usersRepository.Save();
+			//_usersRepository.Update(user);
+			return Task.FromResult(new SetProfileInfoResponse() { ResponseStatus = SetProfileInfoStatus.SetSuccessfully });
+		}
+
 	}
 
 

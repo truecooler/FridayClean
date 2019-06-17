@@ -6,13 +6,32 @@
              x:Class="FridayClean.Client.Views.EditProfilePage">
     <ContentPage.Content>
         <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
-            <Label>Введите ваше Имя:</Label>
-            <Entry>
-            </Entry>
+            <ActivityIndicator 
+                IsRunning="{Binding IsBusy}"  
+                IsEnabled="{Binding IsBusy}"  
+                IsVisible="true"  
+                Color="{StaticResource FridayCleanBlackColor}"  
+                BackgroundColor="Transparent"/>
+            <Frame BackgroundColor="{StaticResource FridayCleanBlackColor}" HasShadow="False" CornerRadius="10">
+                <StackLayout Orientation="Vertical" Spacing="10">
+                    <Entry Placeholder="Введите ваше новое имя"   
+                           PlaceholderColor="White" HeightRequest="45"   
+                           Keyboard="Text"  
+                           TextColor="White"
+                           Text="{Binding ProfileName, Mode=TwoWay}">
 
-            <Label>Выберете ваш адрес:</Label>
-            <Entry>
-            </Entry>
+                    </Entry>
+                    <Entry Placeholder="Введите ваш новый адрес"   
+                           PlaceholderColor="White" HeightRequest="45"   
+                           Keyboard="Text"  
+                           TextColor="White"
+                           Text="{Binding ProfileAddress, Mode=TwoWay}">
+                    </Entry>
+
+                    
+                </StackLayout>
+            </Frame>
+            <Button Text="Сохранить" Command="{Binding SaveCommand}"></Button>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

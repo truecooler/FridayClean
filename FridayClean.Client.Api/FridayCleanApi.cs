@@ -160,6 +160,16 @@ namespace FridayClean.Client.Api
 			return CallApiAndRethrowExceptions(x => x.GetProfileInfo(request, new Metadata()));
 		}
 
+		public Task<SetProfileInfoResponse> SetProfileInfoAsync(SetProfileInfoRequest request)
+		{
+			return CallApiAndRethrowExceptionsAsync(async x => await x.SetProfileInfoAsync(request, new Metadata()));
+		}
+
+		public SetProfileInfoResponse SetProfileInfo(SetProfileInfoRequest request)
+		{
+			return CallApiAndRethrowExceptions(x => x.SetProfileInfo(request, new Metadata()));
+		}
+
 		public Task<UserLogoutResponse> UserLogoutAsync(UserLogoutRequest request)
 		{
 			return CallApiAndRethrowExceptionsAsync(async x => await x.UserLogoutAsync(request, new Metadata()));
@@ -169,5 +179,7 @@ namespace FridayClean.Client.Api
 		{
 			return CallApiAndRethrowExceptions(x => x.UserLogout(request, new Metadata()));
 		}
+
+
 	}
 }
