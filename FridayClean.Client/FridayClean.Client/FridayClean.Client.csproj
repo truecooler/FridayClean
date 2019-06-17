@@ -29,14 +29,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Views\OrgerCleaningPage.xaml.cs">
+      <DependentUpon>OrgerCleaningPage.xaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\ProfilePage.xaml.cs">
       <DependentUpon>ProfilePage.xaml</DependentUpon>
     </Compile>
     <Compile Update="Views\DashboardPage.xaml.cs">
       <DependentUpon>DashboardPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Views\CleaningPage.xaml.cs">
-      <DependentUpon>CleaningPage.xaml</DependentUpon>
     </Compile>
     <Compile Update="Views\RatingPage.xaml.cs">
       <DependentUpon>RatingPage.xaml</DependentUpon>
@@ -44,6 +44,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="Views\CleaningsPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\OrgerCleaningPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="Views\EditProfilePage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
@@ -54,9 +60,6 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\DashboardPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Views\CleaningPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\RatingPage.xaml">

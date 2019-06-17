@@ -55,18 +55,21 @@ namespace FridayClean.Client
 			containerRegistry.RegisterForNavigation<NavigationPage>();
 			containerRegistry.RegisterForNavigation<LoginPage, LoginPageViewModel>();
 			containerRegistry.RegisterForNavigation<DashboardPage, DashboardPageViewModel>();
-			containerRegistry.RegisterForNavigation<CleaningPage>();
+			containerRegistry.RegisterForNavigation<CleaningsPage>();
 			containerRegistry.RegisterForNavigation<ProfilePage>();
 			containerRegistry.RegisterForNavigation<RatingPage>();
 			containerRegistry.RegisterForNavigation<EditProfilePage>();
+			containerRegistry.RegisterForNavigation<OrgerCleaningPage>();
 			//containerRegistry.RegisterInstance<IFridayCleanApi>(
 			//new FridayCleanApi(FridayCleanApiSettings.ProductionDefault()));
 
-			containerRegistry.RegisterInstance(FridayCleanApiSettings.ProductionDefault());
+			containerRegistry.RegisterInstance(FridayCleanApiSettings.DevelopmentDefault());
 			containerRegistry.RegisterSingleton<IFridayCleanApi, FridayCleanApi>();
 
 
 			containerRegistry.RegisterForNavigation<EditProfilePage, EditProfilePageViewModel>();
+			containerRegistry.RegisterForNavigation<CleaningsPage, CleaningsPageViewModel>();
+			containerRegistry.RegisterForNavigation<CleaningsPage, CleaningsPageViewModel>();
 		}
 	}
 }

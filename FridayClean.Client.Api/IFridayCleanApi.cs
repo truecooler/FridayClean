@@ -33,5 +33,13 @@ namespace FridayClean.Client.Api
 		Task<UserLogoutResponse> UserLogoutAsync(UserLogoutRequest request);
 
 		UserLogoutResponse UserLogout(UserLogoutRequest request);
+
+		Task<GetCleaningServicesResponse> GetCleaningServicesAsync(GetCleaningServicesRequest request);
+
+		GetCleaningServicesResponse GetCleaningServices(GetCleaningServicesRequest request);
+
+		Task<GetOrderedCleaningsResponse> GetOrderedCleaningsAsync(GetOrderedCleaningsRequest request);
+
+		GetOrderedCleaningsResponse GetOrderedCleanings(GetOrderedCleaningsRequest request);
 	}
 }

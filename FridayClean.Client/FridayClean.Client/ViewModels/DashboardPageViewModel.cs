@@ -46,7 +46,7 @@ namespace FridayClean.Client.ViewModels
 			MenuItems.Add(new DashboardPageMenuItem()
 			{
 				Icon = "broom_logo.png",
-				PageName = nameof(CleaningPage),
+				PageName = nameof(CleaningsPage),
 				Title = "Уборки"
 			});
 

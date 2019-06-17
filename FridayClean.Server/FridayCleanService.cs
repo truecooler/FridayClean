@@ -10,6 +10,8 @@ using FridayClean.Common.Helpers;
 using FridayClean.Server.Repositories;
 using Microsoft.EntityFrameworkCore;
 using FridayClean.Server.DataBaseModels;
+using FridayClean.Server.DataBaseModels.Enums;
+using Google.Protobuf.Collections;
 
 //using FridayCleanProtocol;
 
@@ -30,15 +32,23 @@ namespace FridayClean.Server
 
 		private IRepository<AuthenticatedSession> _authenticatedSessionsRepository;
 
+		private IRepository<DataBaseModels.CleaningService> _cleaningServicesRepository;
+
+		private IRepository<DataBaseModels.OrderedCleaning> _orderedCleaningsRepository;
+
 		public FridayCleanService(ISmsService smsService, IRepository<User> usersRepository,
 			IRepository<SentSmsCode> sentSmsCodesRepository,
-			IRepository<AuthenticatedSession> authenticatedSessionsRepository, ILogger<FridayCleanService> logger)
+			IRepository<AuthenticatedSession> authenticatedSessionsRepository,
+			IRepository<DataBaseModels.CleaningService> cleaningServicesRepository,
+			IRepository<DataBaseModels.OrderedCleaning> orderedCleaningsRepository,ILogger<FridayCleanService> logger)
 		{
 			_smsService = smsService;
 			_logger = logger;
 			_usersRepository = usersRepository;
 			_sentSmsCodesRepository = sentSmsCodesRepository;
 			_authenticatedSessionsRepository = authenticatedSessionsRepository;
+			_cleaningServicesRepository = cleaningServicesRepository;
+			_orderedCleaningsRepository = orderedCleaningsRepository;
 		}
 
 		public async override Task<AuthSendCodeResponse> AuthSendCode(AuthSendCodeRequest request, ServerCallContext context)
@@ -87,7 +97,8 @@ namespace FridayClean.Server
 
 				if (!_usersRepository.IsExist(x => x.Phone == request.Phone))
 				{
-					_usersRepository.Add(new User(){Phone = request.Phone,Name = "",Address = ""});
+					_usersRepository.Add(new User()
+						{Phone = request.Phone, Name = "", Address = "", Money = 0, Role = UserRole.Customer});
 					_usersRepository.Save();
 				}
 
@@ -159,10 +170,49 @@ namespace FridayClean.Server
 			return Task.FromResult(new SetProfileInfoResponse() { ResponseStatus = SetProfileInfoStatus.SetSuccessfully });
 		}
 
+		public override Task<GetCleaningServicesResponse> GetCleaningServices(GetCleaningServicesRequest request, ServerCallContext context)
+		{
+			var cleaningServicesFromBd = _cleaningServicesRepository.GetAll();
+
+			var result = new GetCleaningServicesResponse();
+			foreach (var cleaningService in cleaningServicesFromBd)
+			{
+				result.CleaningServices.Add(new CleaningService()
+				{
+					CleaningType = cleaningService.CleaningType,
+					Name = cleaningService.Name,
+					ApartmentAreaMax = cleaningService.ApartmentAreaMax,
+					ApartmentAreaMin = cleaningService.ApartmentAreaMin,
+					StartingPrice = cleaningService.StartingPrice
+				});
+			}
+			return Task.FromResult(result);
+		}
+
+
+		public override Task<GetOrderedCleaningsResponse> GetOrderedCleanings(GetOrderedCleaningsRequest request, ServerCallContext context)
+		{
+			var phone = GetPhoneFromContext(context);
+
+			var orderedCleaningsFromBd = _orderedCleaningsRepository.GetMany(x=>x.CustomerPhone == phone);
+
+			var result = new GetOrderedCleaningsResponse();
+			foreach (var orderedCleaning in orderedCleaningsFromBd)
+			{
+				result.OrderedCleanings.Add(new OrderedCleaning()
+				{
+					CleaningType = orderedCleaning.CleaningType,
+					CustomerPhone = orderedCleaning.CustomerPhone,
+					Id = orderedCleaning.Id,
+					State = orderedCleaning.State,
+					CleanerPhone = orderedCleaning.CleanerPhone,
+					ApartmentArea = orderedCleaning.ApartmentArea,
+					Price = orderedCleaning.Price
+				});
+			}
+			return Task.FromResult(result);
+		}
+
 	}
-
-
-
-
 
 }

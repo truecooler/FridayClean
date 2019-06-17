@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
+             xmlns:b="clr-namespace:Prism.Behaviors;assembly=Prism.Forms"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="FridayClean.Client.Views.CleaningsPage">
+    <ContentPage.Content>
+        <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
+            <ActivityIndicator 
+                IsRunning="{Binding IsBusy}"  
+                IsEnabled="{Binding IsBusy}"  
+                IsVisible="true"  
+                Color="{StaticResource FridayCleanBlackColor}"  
+                BackgroundColor="Transparent"/>
+
+            
+            <StackLayout IsVisible="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}"
+                         HorizontalOptions="Center" VerticalOptions="Center">
+                <Label Text="Заказанные уборки:"></Label>
+                <ListView x:Name="CountryListView"
+                          HorizontalOptions="FillAndExpand"
+                          VerticalOptions="FillAndExpand"
+                          HasUnevenRows="True"
+                          BackgroundColor="White"
+                  
+                          SelectedItem="{Binding SelectedItem}"
+                          ItemsSource="{Binding OrderedCleanings}" Margin="5" HeightRequest="200">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <StackLayout Padding="5">
+                                    <Label Text="{Binding Id}" />
+                                    <Label Text="{Binding CustomerPhone}" />
+                                    <Label Text="{Binding CleanerPhone}" />
+                                    <Label Text="{Binding CleaningType}" />
+                                    <Label Text="{Binding ApartmentArea}" />
+                                    <Label Text="{Binding Price}" />
+                                    <Label Text="{Binding State}" />
+                                </StackLayout>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                    <ListView.Behaviors>
+                        <b:EventToCommandBehavior EventName="ItemTapped" 
+                                                  Command="{Binding ItemTappedCommand}" />
+                    </ListView.Behaviors>
+                </ListView>
+                <Button Text="Заказать уборку" Command="{Binding OrderNewCleaningCommand}"></Button>
+            </StackLayout>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

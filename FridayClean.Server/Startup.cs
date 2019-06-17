@@ -49,6 +49,8 @@ namespace FridayClean.Server
 			services.AddScoped<IRepository<User>, BaseRepository<User, ApplicationDbContext>>();
 			services.AddScoped<IRepository<SentSmsCode>, BaseRepository<SentSmsCode, ApplicationDbContext>>();
 			services.AddScoped<IRepository<AuthenticatedSession>, BaseRepository<AuthenticatedSession, ApplicationDbContext>>();
+			services.AddScoped<IRepository<DataBaseModels.CleaningService>, BaseRepository<DataBaseModels.CleaningService, ApplicationDbContext>>();
+			services.AddScoped<IRepository<DataBaseModels.OrderedCleaning>, BaseRepository<DataBaseModels.OrderedCleaning, ApplicationDbContext>>();
 			serviceProvider = services.BuildServiceProvider();
 
 			var dbcontext = serviceProvider.GetService(typeof(ApplicationDbContext)) as ApplicationDbContext;

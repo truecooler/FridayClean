@@ -180,6 +180,24 @@ namespace FridayClean.Client.Api
 			return CallApiAndRethrowExceptions(x => x.UserLogout(request, new Metadata()));
 		}
 
+		public Task<GetCleaningServicesResponse> GetCleaningServicesAsync(GetCleaningServicesRequest request)
+		{
+			return CallApiAndRethrowExceptionsAsync(async x => await x.GetCleaningServicesAsync(request, new Metadata()));
+		}
 
+		public GetCleaningServicesResponse GetCleaningServices(GetCleaningServicesRequest request)
+		{
+			return CallApiAndRethrowExceptions(x => x.GetCleaningServices(request, new Metadata()));
+		}
+
+		public Task<GetOrderedCleaningsResponse> GetOrderedCleaningsAsync(GetOrderedCleaningsRequest request)
+		{
+			return CallApiAndRethrowExceptionsAsync(async x => await x.GetOrderedCleaningsAsync(request, new Metadata()));
+		}
+
+		public GetOrderedCleaningsResponse GetOrderedCleanings(GetOrderedCleaningsRequest request)
+		{
+			return CallApiAndRethrowExceptions(x => x.GetOrderedCleanings(request, new Metadata()));
+		}
 	}
 }
