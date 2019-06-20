@@ -199,5 +199,25 @@ namespace FridayClean.Client.Api
 		{
 			return CallApiAndRethrowExceptions(x => x.GetOrderedCleanings(request, new Metadata()));
 		}
+
+		public Task<OrderNewCleaningResponse> OrderNewCleaningAsync(OrderNewCleaningRequest request)
+		{
+			return CallApiAndRethrowExceptionsAsync(async x => await x.OrderNewCleaningAsync(request, new Metadata()));
+		}
+
+		public OrderNewCleaningResponse OrderNewCleaning(OrderNewCleaningRequest request)
+		{
+			return CallApiAndRethrowExceptions(x => x.OrderNewCleaning(request, new Metadata()));
+		}
+
+		public Task<GetCleanersResponse> GetCleanersAsync(GetCleanersRequest request)
+		{
+			return CallApiAndRethrowExceptionsAsync(async x => await x.GetCleanersAsync(request, new Metadata()));
+		}
+
+		public GetCleanersResponse GetCleaners(GetCleanersRequest request)
+		{
+			return CallApiAndRethrowExceptions(x => x.GetCleaners(request, new Metadata()));
+		}
 	}
 }

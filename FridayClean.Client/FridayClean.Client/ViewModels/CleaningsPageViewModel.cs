@@ -20,7 +20,7 @@ namespace FridayClean.Client.ViewModels
 
 		public DelegateCommand OrderNewCleaningCommand { get; set; }
 
-		private bool _isBusy = false;
+		private bool _isBusy = true;
 
 		public bool IsBusy
 		{
@@ -35,7 +35,8 @@ namespace FridayClean.Client.ViewModels
 
 		private void OnOrderNewCleaningCommand()
 		{
-			_navigationService.NavigateAsync("OrgerCleaningPage");
+			IsBusy = true;
+			_navigationService.NavigateAsync("OrderCleaningPage");
 		}
 		public OrderedCleaning SelectedItem { get; set; }
 		public ObservableCollection<OrderedCleaning> OrderedCleanings { get; }
@@ -52,6 +53,7 @@ namespace FridayClean.Client.ViewModels
 		public async override void OnNavigatedTo(INavigationParameters parameters)
 		{
 			IsBusy = true;
+
 			GetOrderedCleaningsResponse response = null;
 			try
 			{
@@ -69,7 +71,6 @@ namespace FridayClean.Client.ViewModels
 
 				OrderedCleanings.Add(orderedCleaning);
 			}
-
 			IsBusy = false;
 		}
 	}

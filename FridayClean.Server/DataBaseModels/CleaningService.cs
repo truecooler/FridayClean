@@ -16,5 +16,9 @@ namespace FridayClean.Server.DataBaseModels
 		public int StartingPrice { get; set; }
 
 		public string Name { get; set; }
+
+		public string Description { get; set; }
+
+		public ICollection<OrderedCleaning> OrderedCleanings { get; set; }
 	}
 }

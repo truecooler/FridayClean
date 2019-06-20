@@ -23,5 +23,7 @@ namespace FridayClean.Server.DataBaseModels
 
 		public User Customer { get; set; }
 		public User Cleaner { get; set; }
+
+		public CleaningService CleaningService { get; set; }
 	}
 }

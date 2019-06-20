@@ -9,6 +9,7 @@
     <None Remove="Certificates\server1.key" />
     <None Remove="Certificates\server1.pem" />
   </ItemGroup>
+  
 
   <ItemGroup>
     <EmbeddedResource Include="Certificates\ca.pem">
@@ -26,5 +27,4 @@
     <PackageReference Include="Grpc.Core" Version="1.21.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="2.2.0" />
   </ItemGroup>
-
 </Project>

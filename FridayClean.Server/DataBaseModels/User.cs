@@ -19,6 +19,8 @@ namespace FridayClean.Server.DataBaseModels
 
 		public int Money { get; set; }
 
+		public string AvatarLink { get; set; }
+
 		public UserRole Role{get ; set; }
 
 		public ICollection<AuthenticatedSession> AuthenticatedSessions { get; set; }

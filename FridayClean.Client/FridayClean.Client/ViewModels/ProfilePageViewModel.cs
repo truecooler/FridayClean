@@ -22,7 +22,7 @@ namespace FridayClean.Client.ViewModels
 
 		private GetProfileInfoResponse _profileInfo;
 
-		private bool _isBusy = false;
+		private bool _isBusy = true;
 		public bool IsBusy
 		{
 			get => _isBusy;
@@ -39,6 +39,11 @@ namespace FridayClean.Client.ViewModels
 			get { return string.IsNullOrEmpty(_profileInfo?.Address) ? "Адрес не установлен" : _profileInfo.Address; }
 		}
 
+		public string ProfileAvatarLink
+		{
+			get { return string.IsNullOrEmpty(_profileInfo?.AvatarLink) ? "avatar.jpg" : _profileInfo.AvatarLink; }
+		}
+
 		public DelegateCommand EditProfileCommand { get; }
 
 		public DelegateCommand LogoutCommand { get; }
@@ -48,6 +53,7 @@ namespace FridayClean.Client.ViewModels
 		{
 			var parameters = new NavigationParameters();
 			parameters.Add("_profileInfo", _profileInfo);
+			IsBusy = true;
 			await _navigationService.NavigateAsync("EditProfilePage", parameters);
 		}
 
@@ -92,6 +98,7 @@ namespace FridayClean.Client.ViewModels
 				_profileInfo = await _api.GetProfileInfoAsync(new GetProfileInfoRequest(new GetProfileInfoRequest()));
 				RaisePropertyChanged(nameof(ProfileName));
 				RaisePropertyChanged(nameof(ProfileAddress));
+				RaisePropertyChanged(nameof(ProfileAvatarLink));
 			}
 			catch (GrpcExceptionBase ex)
 			{

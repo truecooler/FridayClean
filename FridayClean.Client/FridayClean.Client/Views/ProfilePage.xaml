@@ -15,9 +15,9 @@
                 BackgroundColor="Transparent"/>
 
 
-            <StackLayout IsVisible="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}">
+            <StackLayout IsVisible="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" Margin="10">
 
-                <Image HorizontalOptions="Center" HeightRequest="300" WidthRequest="300" Source="avatar.jpg" />
+                <Image HorizontalOptions="Center" HeightRequest="300" WidthRequest="300" Source="{Binding ProfileAvatarLink}" />
 
                 <Label Text="{Binding ProfileName, StringFormat='Приветствуем вас, {0}'}"
                        HorizontalOptions="Center" VerticalOptions="CenterAndExpand" />

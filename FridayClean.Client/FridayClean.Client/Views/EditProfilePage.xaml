@@ -13,20 +13,27 @@
                 IsVisible="true"  
                 Color="{StaticResource FridayCleanBlackColor}"  
                 BackgroundColor="Transparent"/>
-            <Frame BackgroundColor="{StaticResource FridayCleanBlackColor}" HasShadow="False" CornerRadius="10">
+            <Frame BackgroundColor="{StaticResource FridayCleanBlackColor}" HasShadow="False" CornerRadius="10" >
                 <StackLayout Orientation="Vertical" Spacing="10">
+                    <Entry Placeholder="Введите ссылку на новое фото"   
+                           PlaceholderColor="White" HeightRequest="45"   
+                           Keyboard="Text"  
+                           TextColor="White"
+                           Text="{Binding ProfileAvatarLink}">
+
+                    </Entry>
                     <Entry Placeholder="Введите ваше новое имя"   
                            PlaceholderColor="White" HeightRequest="45"   
                            Keyboard="Text"  
                            TextColor="White"
-                           Text="{Binding ProfileName, Mode=TwoWay}">
+                           Text="{Binding ProfileName}">
 
                     </Entry>
                     <Entry Placeholder="Введите ваш новый адрес"   
                            PlaceholderColor="White" HeightRequest="45"   
                            Keyboard="Text"  
                            TextColor="White"
-                           Text="{Binding ProfileAddress, Mode=TwoWay}">
+                           Text="{Binding ProfileAddress}">
                     </Entry>
 
                     

@@ -41,5 +41,13 @@ namespace FridayClean.Client.Api
 		Task<GetOrderedCleaningsResponse> GetOrderedCleaningsAsync(GetOrderedCleaningsRequest request);
 
 		GetOrderedCleaningsResponse GetOrderedCleanings(GetOrderedCleaningsRequest request);
+
+		Task<OrderNewCleaningResponse> OrderNewCleaningAsync(OrderNewCleaningRequest request);
+
+		OrderNewCleaningResponse OrderNewCleaning(OrderNewCleaningRequest request);
+
+		Task<GetCleanersResponse> GetCleanersAsync(GetCleanersRequest request);
+
+		GetCleanersResponse GetCleaners(GetCleanersRequest request);
 	}
 }

@@ -40,7 +40,7 @@ namespace FridayClean.Server
 			IRepository<SentSmsCode> sentSmsCodesRepository,
 			IRepository<AuthenticatedSession> authenticatedSessionsRepository,
 			IRepository<DataBaseModels.CleaningService> cleaningServicesRepository,
-			IRepository<DataBaseModels.OrderedCleaning> orderedCleaningsRepository,ILogger<FridayCleanService> logger)
+			IRepository<DataBaseModels.OrderedCleaning> orderedCleaningsRepository, ILogger<FridayCleanService> logger)
 		{
 			_smsService = smsService;
 			_logger = logger;
@@ -51,7 +51,8 @@ namespace FridayClean.Server
 			_orderedCleaningsRepository = orderedCleaningsRepository;
 		}
 
-		public async override Task<AuthSendCodeResponse> AuthSendCode(AuthSendCodeRequest request, ServerCallContext context)
+		public async override Task<AuthSendCodeResponse> AuthSendCode(AuthSendCodeRequest request,
+			ServerCallContext context)
 		{
 			if (request.Phone == "77777777777")
 			{
@@ -60,6 +61,7 @@ namespace FridayClean.Server
 					ResponseStatus = AuthSendCodeStatus.Success
 				};
 			}
+
 			//var token = context.RequestHeaders.SingleOrDefault(x => x.Key.Contains(Constants.AuthHeaderName))?.Value;
 			//_logger.LogInformation($"token: {token??"null"}");
 			var code = Utils.SmsCodeGenerator.Generate();
@@ -76,21 +78,24 @@ namespace FridayClean.Server
 				{
 					_sentSmsCodesRepository.Get(x => x.Phone == request.Phone).Code = code;
 				}
+
 				_sentSmsCodesRepository.Save();
 			}
 
-			
+
 			return new AuthSendCodeResponse()
 			{
 				ResponseStatus = sendSmsResponse
 			};
 		}
 
-		public override Task<AuthValidateCodeResponse> AuthValidateCode(AuthValidateCodeRequest request, ServerCallContext context)
+		public override Task<AuthValidateCodeResponse> AuthValidateCode(AuthValidateCodeRequest request,
+			ServerCallContext context)
 		{
 			AuthValidateCodeStatus responseStatus = AuthValidateCodeStatus.InvalidCode;
 
-			if (_sentSmsCodesRepository.IsExist(x=>x.Phone == request.Phone && x.Code == request.Code) || request.Code == 00000)
+			if (_sentSmsCodesRepository.IsExist(x => x.Phone == request.Phone && x.Code == request.Code) ||
+			    request.Code == 00000)
 			{
 				responseStatus = AuthValidateCodeStatus.ValidCode;
 
@@ -98,31 +103,41 @@ namespace FridayClean.Server
 				if (!_usersRepository.IsExist(x => x.Phone == request.Phone))
 				{
 					_usersRepository.Add(new User()
-						{Phone = request.Phone, Name = "", Address = "", Money = 0, Role = UserRole.Customer});
+					{
+						Phone = request.Phone, Name = "", Address = "", Money = 0, Role = UserRole.Customer,
+						AvatarLink =
+							"https://png.pngtree.com/element_origin_min_pic/17/09/18/86f146e932d55ea3ffc59cf7a976398e.jpg"
+					});
 					_usersRepository.Save();
 				}
 
 
 				var newAccessToken = Utils.AccessTokenGenerator.Generate(request.Phone, request.Code);
 
-				_authenticatedSessionsRepository.Add(new AuthenticatedSession(){Phone = request.Phone,AccessToken = newAccessToken});
+				_authenticatedSessionsRepository.Add(new AuthenticatedSession()
+					{Phone = request.Phone, AccessToken = newAccessToken});
 				_authenticatedSessionsRepository.Save();
 
-				_sentSmsCodesRepository.Delete(x=>x.Phone == request.Phone);
+				_sentSmsCodesRepository.Delete(x => x.Phone == request.Phone);
 				_sentSmsCodesRepository.Save();
 
-				return Task.FromResult(new AuthValidateCodeResponse() { ResponseStatus = responseStatus, AccessToken = newAccessToken });
+				return Task.FromResult(new AuthValidateCodeResponse()
+					{ResponseStatus = responseStatus, AccessToken = newAccessToken});
 			}
 
 
-			return Task.FromResult(new AuthValidateCodeResponse(){ResponseStatus = responseStatus,AccessToken = ""});
+			return Task.FromResult(new AuthValidateCodeResponse() {ResponseStatus = responseStatus, AccessToken = ""});
 		}
 
 
-		public override Task<AuthValidateTokenResponse> AuthValidateToken(AuthValidateTokenRequest request, ServerCallContext context)
+		public override Task<AuthValidateTokenResponse> AuthValidateToken(AuthValidateTokenRequest request,
+			ServerCallContext context)
 		{
 			var result = _authenticatedSessionsRepository.IsExist(x => x.AccessToken == request.AccessToken);
-			return Task.FromResult(new AuthValidateTokenResponse(){ResponseStatus = (result) ? AuthValidateTokenStatus.ValidToken : AuthValidateTokenStatus.InvalidToken});
+			return Task.FromResult(new AuthValidateTokenResponse()
+			{
+				ResponseStatus = (result) ? AuthValidateTokenStatus.ValidToken : AuthValidateTokenStatus.InvalidToken
+			});
 		}
 
 
@@ -139,14 +154,16 @@ namespace FridayClean.Server
 			return context.RequestHeaders.SingleOrDefault(x => x.Key == Constants.AuthHeaderName)?.Value;
 		}
 
-		public override Task<GetProfileInfoResponse> GetProfileInfo(GetProfileInfoRequest request, ServerCallContext context)
+		public override Task<GetProfileInfoResponse> GetProfileInfo(GetProfileInfoRequest request,
+			ServerCallContext context)
 		{
 			string phone = GetPhoneFromContext(context);
 
 			var user = _usersRepository.Get(x => x.Phone == phone);
 			string name = user?.Name;
 			string address = user?.Address;
-			var response = new GetProfileInfoResponse() {Name = name, Address = address};
+			string avatarLink = user?.AvatarLink;
+			var response = new GetProfileInfoResponse() {Name = name, Address = address, AvatarLink = avatarLink};
 			return Task.FromResult(response);
 		}
 
@@ -156,21 +173,25 @@ namespace FridayClean.Server
 			var accessToken = GetAccessTokenFromContext(context);
 			_authenticatedSessionsRepository.Delete(x => x.AccessToken == accessToken);
 			_authenticatedSessionsRepository.Save();
-			return Task.FromResult(new UserLogoutResponse(){ResponseStatus = UserLogoutStatus.LogoutSuccess});
+			return Task.FromResult(new UserLogoutResponse() {ResponseStatus = UserLogoutStatus.LogoutSuccess});
 		}
 
-		public override Task<SetProfileInfoResponse> SetProfileInfo(SetProfileInfoRequest request, ServerCallContext context)
+		public override Task<SetProfileInfoResponse> SetProfileInfo(SetProfileInfoRequest request,
+			ServerCallContext context)
 		{
 			var phone = GetPhoneFromContext(context);
 			var user = _usersRepository.Get(x => x.Phone == phone);
 			user.Name = request.Name;
 			user.Address = request.Address;
+			user.AvatarLink = request.AvatarLink;
 			_usersRepository.Save();
 			//_usersRepository.Update(user);
-			return Task.FromResult(new SetProfileInfoResponse() { ResponseStatus = SetProfileInfoStatus.SetSuccessfully });
+			return Task.FromResult(new SetProfileInfoResponse()
+				{ResponseStatus = SetProfileInfoStatus.SetSuccessfully});
 		}
 
-		public override Task<GetCleaningServicesResponse> GetCleaningServices(GetCleaningServicesRequest request, ServerCallContext context)
+		public override Task<GetCleaningServicesResponse> GetCleaningServices(GetCleaningServicesRequest request,
+			ServerCallContext context)
 		{
 			var cleaningServicesFromBd = _cleaningServicesRepository.GetAll();
 
@@ -183,18 +204,21 @@ namespace FridayClean.Server
 					Name = cleaningService.Name,
 					ApartmentAreaMax = cleaningService.ApartmentAreaMax,
 					ApartmentAreaMin = cleaningService.ApartmentAreaMin,
-					StartingPrice = cleaningService.StartingPrice
+					StartingPrice = cleaningService.StartingPrice,
+					Description = cleaningService.Description
 				});
 			}
+
 			return Task.FromResult(result);
 		}
 
 
-		public override Task<GetOrderedCleaningsResponse> GetOrderedCleanings(GetOrderedCleaningsRequest request, ServerCallContext context)
+		public override Task<GetOrderedCleaningsResponse> GetOrderedCleanings(GetOrderedCleaningsRequest request,
+			ServerCallContext context)
 		{
 			var phone = GetPhoneFromContext(context);
 
-			var orderedCleaningsFromBd = _orderedCleaningsRepository.GetMany(x=>x.CustomerPhone == phone);
+			var orderedCleaningsFromBd = _orderedCleaningsRepository.GetMany(x => x.CustomerPhone == phone);
 
 			var result = new GetOrderedCleaningsResponse();
 			foreach (var orderedCleaning in orderedCleaningsFromBd)
@@ -210,9 +234,53 @@ namespace FridayClean.Server
 					Price = orderedCleaning.Price
 				});
 			}
+
 			return Task.FromResult(result);
 		}
 
+		public override Task<OrderNewCleaningResponse> OrderNewCleaning(OrderNewCleaningRequest request,
+			ServerCallContext context)
+		{
+			var phone = GetPhoneFromContext(context);
+
+			var cleaningService = _cleaningServicesRepository.Get(x => x.CleaningType == request.CleaningType);
+			if (cleaningService == null)
+			{
+				throw new RpcException(new Status(StatusCode.InvalidArgument,
+					$"Cleaning service {request.CleaningType.ToString()} is not exists."));
+			}
+
+			_orderedCleaningsRepository.Add(new DataBaseModels.OrderedCleaning()
+			{
+				CleanerPhone = request.CleanerPhone, CustomerPhone = phone,
+				CleaningType = request.CleaningType, ApartmentArea = request.ApartmentArea,
+				State = OrderedCleaningState.WaitingForCleanerConfirmation,
+				Price = Utils.PriceCalculator.Calculate(cleaningService.ApartmentAreaMin, request.ApartmentArea,
+					cleaningService.StartingPrice)
+			});
+			_orderedCleaningsRepository.Save();
+			return Task.FromResult(new OrderNewCleaningResponse()
+				{OrderedCleaningState = OrderedCleaningState.WaitingForCleanerConfirmation});
+		}
+
+		public override Task<GetCleanersResponse> GetCleaners(GetCleanersRequest request,
+			ServerCallContext context)
+		{
+			var cleanersFromBd = _usersRepository.GetMany(x => x.Role == UserRole.Cleaner);
+			var result = new GetCleanersResponse();
+
+			foreach (var cleaner in cleanersFromBd)
+			{
+				result.Cleaners.Add(new Cleaner()
+				{
+					Phone = cleaner.Phone,
+					Name = cleaner.Name,
+					AvatarLink = cleaner.AvatarLink
+				});
+			}
+
+			return Task.FromResult(result);
+		}
 	}
 
 }

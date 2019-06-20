@@ -4,7 +4,8 @@
              xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
              xmlns:b="clr-namespace:Prism.Behaviors;assembly=Prism.Forms"
              prism:ViewModelLocator.AutowireViewModel="True"
-             x:Class="FridayClean.Client.Views.CleaningsPage">
+             x:Class="FridayClean.Client.Views.CleaningsPage"
+             Title="Панель заказанных уборок">
     <ContentPage.Content>
         <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
             <ActivityIndicator 
@@ -14,15 +15,14 @@
                 Color="{StaticResource FridayCleanBlackColor}"  
                 BackgroundColor="Transparent"/>
 
-            
-            <StackLayout IsVisible="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}"
+
+            <StackLayout IsVisible="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" Margin="10"
                          HorizontalOptions="Center" VerticalOptions="Center">
-                <Label Text="Заказанные уборки:"></Label>
+                <Label Text="Заказанные уборки:" HorizontalOptions="Center"></Label>
                 <ListView x:Name="CountryListView"
                           HorizontalOptions="FillAndExpand"
                           VerticalOptions="FillAndExpand"
                           HasUnevenRows="True"
-                          BackgroundColor="White"
                   
                           SelectedItem="{Binding SelectedItem}"
                           ItemsSource="{Binding OrderedCleanings}" Margin="5" HeightRequest="200">

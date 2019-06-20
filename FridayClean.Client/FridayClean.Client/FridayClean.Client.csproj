@@ -29,8 +29,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Views\OrgerCleaningPage.xaml.cs">
-      <DependentUpon>OrgerCleaningPage.xaml</DependentUpon>
+    <Compile Update="Views\OrderCleaningPage.xaml.cs">
+      <DependentUpon>OrderCleaningPage.xaml</DependentUpon>
     </Compile>
     <Compile Update="Views\ProfilePage.xaml.cs">
       <DependentUpon>ProfilePage.xaml</DependentUpon>
@@ -47,10 +47,13 @@
     <EmbeddedResource Update="Views\CleaningsPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\OrgerCleaningPage.xaml">
+    <EmbeddedResource Update="Views\OrderCleaningPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\EditProfilePage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\OrderCleaningPage2.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\ProfilePage.xaml">

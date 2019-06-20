@@ -11,6 +11,8 @@ service FridayCleanCommunication {
 	rpc UserLogout (UserLogoutRequest) returns (UserLogoutResponse) {}
 	rpc GetCleaningServices (GetCleaningServicesRequest) returns (GetCleaningServicesResponse) {}
 	rpc GetOrderedCleanings (GetOrderedCleaningsRequest) returns (GetOrderedCleaningsResponse) {}
+	rpc OrderNewCleaning (OrderNewCleaningRequest) returns (OrderNewCleaningResponse) {}
+	rpc GetCleaners (GetCleanersRequest) returns (GetCleanersResponse) {}
 }
 
 
@@ -69,12 +71,14 @@ message GetProfileInfoRequest {
 message GetProfileInfoResponse {
 	string Name = 1;
 	string Address = 2;
+	string AvatarLink = 3;
 }
 
 
 message SetProfileInfoRequest {
 	string Name = 1;
 	string Address = 2;
+	string AvatarLink = 3;
 }
 
 enum SetProfileInfoStatus
@@ -121,6 +125,7 @@ message CleaningService
 	int32 ApartmentAreaMax = 3;
 	int32 StartingPrice = 4;
 	string Name = 5;
+	string Description = 6;
 }
 
 message GetCleaningServicesResponse {
@@ -138,7 +143,8 @@ enum OrderedCleaningState {
 	WaitingForCleanerConfirmation = 0;
 	ClientIsWaitingForCleanerArrival = 1;
 	CleanerWorkInProgress = 2;
-	Completed = 3;
+	Canceled = 3;
+	Completed = 4;
 }
 
 message OrderedCleaning {
@@ -153,4 +159,35 @@ message OrderedCleaning {
 
 message GetOrderedCleaningsResponse {
 	repeated OrderedCleaning OrderedCleanings = 1;
+}
+
+
+message OrderNewCleaningRequest
+{
+	string CleanerPhone = 3;
+	CleaningType CleaningType = 4;
+	int32 ApartmentArea = 5;
+}
+
+message OrderNewCleaningResponse
+{
+	OrderedCleaningState OrderedCleaningState = 1;
+}
+
+
+message GetCleanersRequest
+{
+
+}
+
+message Cleaner
+{
+	string Phone = 1;
+	string Name = 2;
+	string AvatarLink = 3;
+}
+
+message GetCleanersResponse
+{
+	repeated Cleaner Cleaners = 1;
 }

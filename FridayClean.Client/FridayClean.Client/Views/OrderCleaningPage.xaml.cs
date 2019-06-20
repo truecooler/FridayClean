@@ -3,9 +3,9 @@ using Xamarin.Forms;
 
 namespace FridayClean.Client.Views
 {
-	public partial class OrgerCleaningPage : ContentPage
+	public partial class OrderCleaningPage : ContentPage
 	{
-		public OrgerCleaningPage()
+		public OrderCleaningPage()
 		{		
 			InitializeComponent();
 		}

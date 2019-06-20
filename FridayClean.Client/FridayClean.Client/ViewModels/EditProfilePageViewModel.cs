@@ -67,7 +67,18 @@ namespace FridayClean.Client.ViewModels
 			}
 		}
 
-		private bool _isBusy = false;
+		private string _profileAvatarLink = "";
+		public string ProfileAvatarLink
+		{
+			get => _profileAvatarLink;
+			set
+			{
+				SaveCommand.RaiseCanExecuteChanged();
+				SetProperty(ref _profileAvatarLink, value);
+			}
+		}
+
+		private bool _isBusy = true;
 		public bool IsBusy
 		{
 			get => _isBusy;
@@ -79,11 +90,7 @@ namespace FridayClean.Client.ViewModels
 		{
 			_api = api;
 			_navigationService = navigationService;
-			SaveCommand = new DelegateCommand(OnSaveCommand, () =>
-			{
-				return !string.IsNullOrEmpty(ProfileName)
-				       && !string.IsNullOrEmpty(ProfileAddress);
-			});
+			SaveCommand = new DelegateCommand(OnSaveCommand);
 		}
 
 		private async void OnSaveCommand()
@@ -92,7 +99,7 @@ namespace FridayClean.Client.ViewModels
 			try
 			{
 				var response = await _api.SetProfileInfoAsync(new SetProfileInfoRequest()
-					{Address = ProfileAddress, Name = ProfileName});
+					{Address = ProfileAddress, Name = ProfileName, AvatarLink = ProfileAvatarLink});
 
 
 				CrossToastPopUp.Current.ShowToastMessage(response.ResponseStatus == SetProfileInfoStatus.SetSuccessfully
@@ -113,6 +120,9 @@ namespace FridayClean.Client.ViewModels
 			parameters.TryGetValue("_profileInfo", out _profileInfo);
 			ProfileName = _profileInfo.Name;
 			ProfileAddress = _profileInfo.Address;
+			ProfileAvatarLink = _profileInfo.AvatarLink;
+
+			IsBusy = false;
 			//RaisePropertyChanged(ProfileName);
 			//RaisePropertyChanged(ProfileAddress);
 		}

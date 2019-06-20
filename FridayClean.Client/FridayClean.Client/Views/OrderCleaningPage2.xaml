@@ -4,46 +4,46 @@
              xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
              xmlns:b="clr-namespace:Prism.Behaviors;assembly=Prism.Forms"
              prism:ViewModelLocator.AutowireViewModel="True"
-             x:Class="FridayClean.Client.Views.OrgerCleaningPage"
-             Title="Уборки">
+             x:Class="FridayClean.Client.Views.OrderCleaningPage2"
+             Title="Выбор клинера">
 
     <ContentPage.Content>
-        <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
+        <StackLayout HorizontalOptions="Center" VerticalOptions="StartAndExpand">
             <ActivityIndicator 
                 IsRunning="{Binding IsBusy}"  
                 IsEnabled="{Binding IsBusy}"  
                 IsVisible="true"  
                 Color="{StaticResource FridayCleanBlackColor}"  
                 BackgroundColor="Transparent"/>
-            
-           
-            <StackLayout IsVisible="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}"
-                         HorizontalOptions="Center" VerticalOptions="Center">
-                <Label Text="Выберите тип уборки:"></Label>
+
+
+            <StackLayout IsVisible="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" Margin="10"
+                         HorizontalOptions="Center" VerticalOptions="StartAndExpand">
+                <Label Text="Выберите клинера:" HorizontalOptions="Center"></Label>
                 <ListView x:Name="CountryListView"
                   HorizontalOptions="FillAndExpand"
                   VerticalOptions="FillAndExpand"
                   HasUnevenRows="True"
-                  BackgroundColor="White"
                   
                   SelectedItem="{Binding SelectedItem}"
-                  ItemsSource="{Binding CleaningServices}" Margin="5" HeightRequest="200">
+                  ItemsSource="{Binding Cleaners}" Margin="5">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <ViewCell>
-                                <StackLayout Padding="5">
+                                <StackLayout Padding="5" Orientation="Horizontal">
+                                    <Image Source="{Binding AvatarLink}" HeightRequest="100" WidthRequest="100" />
                                     <Label Text="{Binding Name}" />
                                 </StackLayout>
                             </ViewCell>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                     <ListView.Behaviors>
-                        <b:EventToCommandBehavior EventName="ItemTapped" 
-                                              Command="{Binding ItemTappedCommand}" />
+                        <b:EventToCommandBehavior EventName="ItemSelected" 
+                                                  Command="{Binding ItemSelectedCommand}" />
                     </ListView.Behaviors>
                 </ListView>
+                <Button Text="Готово" Command="{Binding NextStepCommand}"></Button>
             </StackLayout>
         </StackLayout>
     </ContentPage.Content>
-
 </ContentPage>
