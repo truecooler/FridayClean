@@ -84,7 +84,7 @@ namespace FridayClean.Client.ViewModels
 			NavigationParameters parameters = new NavigationParameters();
 			parameters.Add("order",order);
 			//IsBusy = true;
-			_navigationService.NavigateAsync("OrderCleaningPage2", parameters);
+			await _navigationService.NavigateAsync("OrderCleaningPage2", parameters);
 		}
 
 		private int _sliderMin = 0;
