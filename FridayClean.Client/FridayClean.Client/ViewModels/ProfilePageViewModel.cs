@@ -44,6 +44,11 @@ namespace FridayClean.Client.ViewModels
 			get { return string.IsNullOrEmpty(_profileInfo?.AvatarLink) ? "avatar.jpg" : _profileInfo.AvatarLink; }
 		}
 
+		public int ProfileMoney
+		{
+			get { return _profileInfo?.Money == null ? 0 : _profileInfo.Money; }
+		}
+
 		public DelegateCommand EditProfileCommand { get; }
 
 		public DelegateCommand LogoutCommand { get; }
@@ -99,6 +104,7 @@ namespace FridayClean.Client.ViewModels
 				RaisePropertyChanged(nameof(ProfileName));
 				RaisePropertyChanged(nameof(ProfileAddress));
 				RaisePropertyChanged(nameof(ProfileAvatarLink));
+				RaisePropertyChanged(nameof(ProfileMoney));
 			}
 			catch (GrpcExceptionBase ex)
 			{

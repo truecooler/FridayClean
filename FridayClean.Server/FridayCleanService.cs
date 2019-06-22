@@ -66,7 +66,7 @@ namespace FridayClean.Server
 			//_logger.LogInformation($"token: {token??"null"}");
 			var code = Utils.SmsCodeGenerator.Generate();
 
-			var sendSmsResponse = await _smsService.SendSmsAsync(request.Phone, $"FridayClean Code: {code}");
+			var sendSmsResponse = await _smsService.SendSmsAsync(request.Phone, $"FridayClean:{code}");
 
 			if (sendSmsResponse == AuthSendCodeStatus.Success)
 			{
@@ -95,7 +95,7 @@ namespace FridayClean.Server
 			AuthValidateCodeStatus responseStatus = AuthValidateCodeStatus.InvalidCode;
 
 			if (_sentSmsCodesRepository.IsExist(x => x.Phone == request.Phone && x.Code == request.Code) ||
-			    request.Code == 00000)
+			    request.Code == 77777)
 			{
 				responseStatus = AuthValidateCodeStatus.ValidCode;
 
@@ -163,7 +163,10 @@ namespace FridayClean.Server
 			string name = user?.Name;
 			string address = user?.Address;
 			string avatarLink = user?.AvatarLink;
-			var response = new GetProfileInfoResponse() {Name = name, Address = address, AvatarLink = avatarLink};
+			string userRole = user?.Role.ToString();
+			int money = user.Money;
+			var response = new GetProfileInfoResponse()
+				{Name = name, Address = address, AvatarLink = avatarLink, Phone = phone, UserRole = userRole, Money = money };
 			return Task.FromResult(response);
 		}
 
@@ -218,18 +221,36 @@ namespace FridayClean.Server
 		{
 			var phone = GetPhoneFromContext(context);
 
-			var orderedCleaningsFromBd = _orderedCleaningsRepository.GetMany(x => x.CustomerPhone == phone);
+			var user = _usersRepository.Get(x => x.Phone == phone);
+
+			
+
+
+			IEnumerable<DataBaseModels.OrderedCleaning> orderedCleaningsFromBd = null;
+			if (user.Role == UserRole.Cleaner)
+			{
+				orderedCleaningsFromBd = _orderedCleaningsRepository.GetMany(x => x.CleanerPhone == phone);
+			}
+			if (user.Role == UserRole.Customer)
+			{
+				orderedCleaningsFromBd = _orderedCleaningsRepository.GetMany(x => x.CustomerPhone == phone);
+			}
 
 			var result = new GetOrderedCleaningsResponse();
 			foreach (var orderedCleaning in orderedCleaningsFromBd)
 			{
+				var cleaner = _usersRepository.Get(x => x.Phone == orderedCleaning.CleanerPhone);
+				var customer = _usersRepository.Get(x => x.Phone == orderedCleaning.CustomerPhone);
 				result.OrderedCleanings.Add(new OrderedCleaning()
 				{
 					CleaningType = orderedCleaning.CleaningType,
-					CustomerPhone = orderedCleaning.CustomerPhone,
+					CleanerName = cleaner?.Name,
+					CleanerPhone = orderedCleaning.CleanerPhone,
+					CustomerName = customer?.Name,
+					CustomerPhone = customer?.Phone,
 					Id = orderedCleaning.Id,
 					State = orderedCleaning.State,
-					CleanerPhone = orderedCleaning.CleanerPhone,
+					Address = orderedCleaning.Address,
 					ApartmentArea = orderedCleaning.ApartmentArea,
 					Price = orderedCleaning.Price
 				});
@@ -250,10 +271,23 @@ namespace FridayClean.Server
 					$"Cleaning service {request.CleaningType.ToString()} is not exists."));
 			}
 
+			var customer = _usersRepository.Get(x => x.Phone == phone);
+			var orderPrice = Utils.PriceCalculator.Calculate(cleaningService.ApartmentAreaMin, request.ApartmentArea,
+				cleaningService.StartingPrice);
+			if (customer.Money - orderPrice < 0)
+			{
+				return Task.FromResult(new OrderNewCleaningResponse()
+					{ OrderedCleaningState = OrderedCleaningState.Canceled, Info = $"Недостаточно денег. Ваш баланс:{customer.Money}. Стоимость уборки: {orderPrice}"});
+			}
+
+			customer.Money -= orderPrice;
+			_usersRepository.Save();
+
 			_orderedCleaningsRepository.Add(new DataBaseModels.OrderedCleaning()
 			{
 				CleanerPhone = request.CleanerPhone, CustomerPhone = phone,
-				CleaningType = request.CleaningType, ApartmentArea = request.ApartmentArea,
+				CleaningType = request.CleaningType, Address = _usersRepository.Get(x => x.Phone == phone)?.Address,
+				ApartmentArea = request.ApartmentArea,
 				State = OrderedCleaningState.WaitingForCleanerConfirmation,
 				Price = Utils.PriceCalculator.Calculate(cleaningService.ApartmentAreaMin, request.ApartmentArea,
 					cleaningService.StartingPrice)
@@ -281,6 +315,63 @@ namespace FridayClean.Server
 
 			return Task.FromResult(result);
 		}
-	}
 
+		//ChangeOrderedCleaningState
+		public override Task<ChangeOrderedCleaningStateResponse> ChangeOrderedCleaningState(
+			ChangeOrderedCleaningStateRequest request,
+			ServerCallContext context)
+		{
+			var orderFromDb = _orderedCleaningsRepository.Get(x => x.Id == request.OrderId);
+			var result = new ChangeOrderedCleaningStateResponse();
+			if (orderFromDb == null)
+			{
+				result.ResponseStatus = ChangeOrderedCleaningStateStatus.OrderStatusChangeError;
+				result.ErrorMessage = "Заказ не найден";
+				return Task.FromResult(result);
+			}
+
+			if (request.RequiredState == OrderedCleaningState.WaitingForCleanerArrival &&
+			    orderFromDb.State != OrderedCleaningState.WaitingForCleanerConfirmation)
+			{
+				result.ResponseStatus = ChangeOrderedCleaningStateStatus.OrderStatusChangeError;
+				result.ErrorMessage = "Неверное состояние заказа. Ожидалось, что клиент ждет подтверждения от клинера.";
+				return Task.FromResult(result);
+			}
+
+			if (request.RequiredState == OrderedCleaningState.CleanerWorkInProgress &&
+			    orderFromDb.State != OrderedCleaningState.WaitingForCleanerArrival)
+			{
+				result.ResponseStatus = ChangeOrderedCleaningStateStatus.OrderStatusChangeError;
+				result.ErrorMessage =
+					"Неверное состояние заказа. Ожидалось, что клиент ждет, пока клинер придет по адресу.";
+				return Task.FromResult(result);
+			}
+
+			if (request.RequiredState == OrderedCleaningState.Completed &&
+			    orderFromDb.State != OrderedCleaningState.CleanerWorkInProgress)
+			{
+				result.ResponseStatus = ChangeOrderedCleaningStateStatus.OrderStatusChangeError;
+				result.ErrorMessage =
+					"Неверное состояние заказа. Ожидалось, что клиент ждет, пока клинер закончит работу.";
+				return Task.FromResult(result);
+			}
+
+			if (request.RequiredState == OrderedCleaningState.Completed)
+			{
+				var customer = _usersRepository.Get(x => x.Phone == orderFromDb.CleanerPhone);
+				customer.Money += orderFromDb.Price;
+				_usersRepository.Save();
+			}
+
+			orderFromDb.State = request.RequiredState;
+			_orderedCleaningsRepository.Save();
+
+			
+
+			result.ResponseStatus = ChangeOrderedCleaningStateStatus.OrderStatusChangedSuccessfully;
+			return Task.FromResult(result);
+		}
+
+	}
 }
+

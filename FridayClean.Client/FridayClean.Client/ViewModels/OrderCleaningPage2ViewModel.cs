@@ -21,7 +21,7 @@ namespace FridayClean.Client.ViewModels
 
 		public DelegateCommand NextStepCommand { get; set; }
 
-		public DelegateCommand ItemSelectedCommand { get; set; }
+		//public DelegateCommand ItemSelectedCommand { get; set; }
 
 		private bool _isBusy = true;
 
@@ -31,7 +31,16 @@ namespace FridayClean.Client.ViewModels
 			set => SetProperty(ref _isBusy, value);
 		}
 
-		public Cleaner SelectedItem { get; set; }
+		private Cleaner _selectedItem = null;
+		public Cleaner SelectedItem
+		{
+			get => _selectedItem;
+			set
+			{
+				SetProperty(ref _selectedItem, value);
+				NextStepCommand.RaiseCanExecuteChanged();
+			}
+		}
 
 		private async void OnNextStepCommand()
 		{
@@ -53,16 +62,16 @@ namespace FridayClean.Client.ViewModels
 			await _navigationService.NavigateAsync("/DashboardPage/NavigationPage/CleaningsPage");
 		}
 
-		private void OnItemSelectedCommand()
-		{
-			NextStepCommand.RaiseCanExecuteChanged();
-		}
+		//private void OnItemSelectedCommand()
+		//{
+		//	NextStepCommand.RaiseCanExecuteChanged();
+		//}
 
 		public OrderCleaningPage2ViewModel(IFridayCleanApi api, INavigationService navigationService, IPageDialogService dialogService) : base(
 			navigationService)
 		{
 			NextStepCommand = new DelegateCommand(OnNextStepCommand);
-			ItemSelectedCommand = new DelegateCommand(OnItemSelectedCommand);
+			//ItemSelectedCommand = new DelegateCommand(OnItemSelectedCommand);
 			_api = api;
 			_navigationService = navigationService;
 			_dialogService = dialogService;
@@ -75,8 +84,7 @@ namespace FridayClean.Client.ViewModels
 		public async override void OnNavigatedTo(INavigationParameters parameters)
 		{
 			IsBusy = true;
-			SelectedItem = null;
-			NextStepCommand.RaiseCanExecuteChanged();
+			//SelectedItem = null;
 			parameters.TryGetValue("order", out _orderNewCleaningRequest);
 			GetCleanersResponse response = null;
 			try

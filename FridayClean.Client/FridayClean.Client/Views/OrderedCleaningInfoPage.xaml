@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="FridayClean.Client.Views.OrderedCleaningInfoPage"
+             Title="Ифнормация о заказе">
+    <ContentPage.Content>
+        <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+            <ActivityIndicator 
+                IsRunning="{Binding IsBusy}"  
+                IsEnabled="{Binding IsBusy}"  
+                IsVisible="{Binding IsBusy}"  
+                Color="{StaticResource FridayCleanBlackColor}"  
+                BackgroundColor="Transparent"
+                VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
+
+
+            <StackLayout IsVisible="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}"
+                         HorizontalOptions="Center" VerticalOptions="StartAndExpand" Margin="10">
+                <Label Text="Информация заказа:" HorizontalOptions="Center"></Label>
+                <Label Text="{Binding Id, StringFormat='Номер заказа: {0}'}" />
+                <Label Text="{Binding CustomerName, StringFormat='Имя клиента: {0}'}" />
+                <Label Text="{Binding CustomerPhone, StringFormat='Телефон клиента: {0}'}" />
+                <Label Text="{Binding CleanerName, StringFormat='Имя клинера: {0}'}" />
+                <Label Text="{Binding CleanerPhone, StringFormat='Телефон клинера: {0}'}" />
+                <Label Text="{Binding CleaningType, StringFormat='Тип уборки: {0}', Converter={StaticResource CleaningTypeConverter}}" />
+                <Label Text="{Binding Address, StringFormat='Адрес помещения: {0}'}" />
+                <Label Text="{Binding ApartmentArea, StringFormat='Площадь помещения: {0} м²'}" />
+                <Label Text="{Binding Price,StringFormat='Цена: {0}'}" />
+                <Label Text="{Binding State, StringFormat='Состояние заказа: {0}', Converter={StaticResource OrderedCleaningStateConverter}}" />
+
+                <Button Text="Клинер выполнил уборку" Style="{StaticResource FridayCleanButtonStyle}" Command="{Binding CleanerCompletedTheWorkCommand}" IsVisible="{Binding IsCustomer}"></Button>
+                <Button Text="Клинер прибыл и начал уборку" Style="{StaticResource FridayCleanButtonStyle}" Command="{Binding CleanerArrivedAndStartedToWorkCommand}" IsVisible="{Binding IsCustomer}"></Button>
+                <Button Text="Подтвердить уборку" Style="{StaticResource FridayCleanButtonStyle}" Command="{Binding CleanerConfirmCleaningCommand}" IsVisible="{Binding IsCleaner}"></Button>
+                <Button Text="Отменить уборку" Style="{StaticResource FridayCleanButtonStyle}" Command="{Binding CancelCleaningCommand}"></Button>
+                <Button Text="Назад" Style="{StaticResource FridayCleanButtonStyle}" Command="{Binding ReturnBackCommand}"></Button>
+            </StackLayout>
+        </StackLayout>
+    </ContentPage.Content>
+
+</ContentPage>

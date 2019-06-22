@@ -219,5 +219,15 @@ namespace FridayClean.Client.Api
 		{
 			return CallApiAndRethrowExceptions(x => x.GetCleaners(request, new Metadata()));
 		}
+
+		public Task<ChangeOrderedCleaningStateResponse> ChangeOrderedCleaningStateAsync(ChangeOrderedCleaningStateRequest request)
+		{
+			return CallApiAndRethrowExceptionsAsync(async x => await x.ChangeOrderedCleaningStateAsync(request, new Metadata()));
+		}
+
+		public ChangeOrderedCleaningStateResponse ChangeOrderedCleaningState(ChangeOrderedCleaningStateRequest request)
+		{
+			return CallApiAndRethrowExceptions(x => x.ChangeOrderedCleaningState(request, new Metadata()));
+		}
 	}
 }

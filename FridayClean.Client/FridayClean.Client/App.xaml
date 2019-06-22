@@ -13,7 +13,18 @@
                 <Setter Property="BarBackgroundColor" Value="{StaticResource FridayCleanBlackColor}" />
             </Style>
 
+            <Style x:Key="FridayCleanButtonStyle" TargetType="Button">
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="FontSize" Value="Large" />
+                <Setter Property="HorizontalOptions" Value="FillAndExpand" />
+                <Setter Property="BackgroundColor" Value="{StaticResource FridayCleanBlackColor}" />
+                <Setter Property="CornerRadius" Value="10" />
+            </Style>
+
             <converters:InverseBoolConverter x:Key="InverseBoolConverter"/>
+            <converters:CleaningTypeConverter x:Key="CleaningTypeConverter"/>
+            <converters:OrderedCleaningStateConverter x:Key="OrderedCleaningStateConverter"/>
         </ResourceDictionary>
     </Application.Resources>
     

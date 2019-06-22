@@ -19,6 +19,7 @@ namespace FridayClean.Client.ViewModels
 		public DelegateCommand ItemTappedCommand { get; set; }
 
 		public DelegateCommand OrderNewCleaningCommand { get; set; }
+		public DelegateCommand OpenOrderedCleaningPageCommand { get; set; }
 
 		private bool _isBusy = true;
 
@@ -28,9 +29,23 @@ namespace FridayClean.Client.ViewModels
 			set => SetProperty(ref _isBusy, value);
 		}
 
-		private void OnItemTappedCommand()
-		{
+		private bool _isCleaner = false;
 
+		public bool IsCleaner
+		{
+			get => _isCleaner;
+			set =>
+				SetProperty(ref _isCleaner, value);
+		}
+
+
+		private bool _isCustomer = false;
+
+		public bool IsCustomer
+		{
+			get => _isCustomer;
+			set =>
+				SetProperty(ref _isCustomer, value);
 		}
 
 		private void OnOrderNewCleaningCommand()
@@ -38,14 +53,32 @@ namespace FridayClean.Client.ViewModels
 			IsBusy = true;
 			_navigationService.NavigateAsync("OrderCleaningPage");
 		}
-		public OrderedCleaning SelectedItem { get; set; }
+
+		private void OnOpenOrderedCleaningPageCommand()
+		{
+			IsBusy = true;
+			var parameters = new NavigationParameters();
+			parameters.Add("order", SelectedItem);
+			_navigationService.NavigateAsync("OrderedCleaningInfoPage", parameters);
+		}
+
+		private OrderedCleaning _selectedItem = null;
+		public OrderedCleaning SelectedItem
+		{
+			get => _selectedItem;
+			set
+			{
+				SetProperty(ref _selectedItem,value);
+				OpenOrderedCleaningPageCommand.RaiseCanExecuteChanged();
+			}
+		}
 		public ObservableCollection<OrderedCleaning> OrderedCleanings { get; }
 		public CleaningsPageViewModel(IFridayCleanApi api, INavigationService navigationService) : base(
 			navigationService)
 		{
 			OrderedCleanings = new ObservableCollection<OrderedCleaning>();
-			ItemTappedCommand = new DelegateCommand(OnItemTappedCommand);
 			OrderNewCleaningCommand = new DelegateCommand(OnOrderNewCleaningCommand);
+			OpenOrderedCleaningPageCommand = new DelegateCommand(OnOpenOrderedCleaningPageCommand,()=> SelectedItem!=null);
 			_api = api;
 			_navigationService = navigationService;
 		}
@@ -55,9 +88,13 @@ namespace FridayClean.Client.ViewModels
 			IsBusy = true;
 
 			GetOrderedCleaningsResponse response = null;
+			GetProfileInfoResponse profile = null;
 			try
 			{
 				response = await _api.GetOrderedCleaningsAsync(new GetOrderedCleaningsRequest(new GetOrderedCleaningsRequest()));
+				profile = await _api.GetProfileInfoAsync(new GetProfileInfoRequest());
+				IsCleaner = profile.UserRole == "Cleaner";
+				IsCustomer = profile.UserRole == "Customer";
 			}
 			catch (GrpcExceptionBase ex)
 			{

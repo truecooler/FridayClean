@@ -17,6 +17,8 @@ namespace FridayClean.Server.DataBaseModels
 		public string CleanerPhone { get; set; }
 
 		public CleaningType CleaningType { get; set; }
+
+		public string Address { get; set; }
 		public int ApartmentArea { get; set; }
 		public int Price { get; set; }
 		public OrderedCleaningState State { get; set; }

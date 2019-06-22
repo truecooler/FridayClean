@@ -49,5 +49,9 @@ namespace FridayClean.Client.Api
 		Task<GetCleanersResponse> GetCleanersAsync(GetCleanersRequest request);
 
 		GetCleanersResponse GetCleaners(GetCleanersRequest request);
+
+		Task<ChangeOrderedCleaningStateResponse> ChangeOrderedCleaningStateAsync(ChangeOrderedCleaningStateRequest request);
+
+		ChangeOrderedCleaningStateResponse ChangeOrderedCleaningState(ChangeOrderedCleaningStateRequest request);
 	}
 }

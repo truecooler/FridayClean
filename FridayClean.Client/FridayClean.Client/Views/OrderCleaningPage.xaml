@@ -31,21 +31,17 @@
                             <ViewCell>
                                 <StackLayout Padding="5" Orientation="Horizontal">
                                     <Label Text="{Binding Name}" />
-                                    
+
                                 </StackLayout>
                             </ViewCell>
                         </DataTemplate>
                     </ListView.ItemTemplate>
-                    <ListView.Behaviors>
-                        <b:EventToCommandBehavior EventName="ItemSelected" 
-                                              Command="{Binding ItemSelectedCommand}" />
-                    </ListView.Behaviors>
                 </ListView>
                 <Label Text="{Binding SliderValue, StringFormat='Укажите размер вашего помещения: {0} м²'}"></Label>
                 <Slider Minimum="{Binding SliderMin}" Maximum="{Binding SliderMax}" Value="{Binding SliderValue}"/>
                 <Label Text="{Binding CalculatedPrice, StringFormat='Стоимость: {0} руб.'}"></Label>
-                <Button Text="Описание услуги" Command="{Binding ShowCleaningServiceDescriptionCommand}"></Button>
-                <Button Text="Далее" Command="{Binding NextStepCommand}"></Button>
+                <Button Text="Описание услуги" Style="{StaticResource FridayCleanButtonStyle}" Command="{Binding ShowCleaningServiceDescriptionCommand}"></Button>
+                <Button Text="Далее" Style="{StaticResource FridayCleanButtonStyle}" Command="{Binding NextStepCommand}"></Button>
             </StackLayout>
         </StackLayout>
     </ContentPage.Content>

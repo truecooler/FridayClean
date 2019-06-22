@@ -39,7 +39,7 @@
                     
                 </StackLayout>
             </Frame>
-            <Button Text="Сохранить" Command="{Binding SaveCommand}"></Button>
+            <Button Text="Сохранить" Style="{StaticResource FridayCleanButtonStyle}" Command="{Binding SaveCommand}"></Button>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

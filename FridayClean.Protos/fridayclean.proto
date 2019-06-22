@@ -13,9 +13,8 @@ service FridayCleanCommunication {
 	rpc GetOrderedCleanings (GetOrderedCleaningsRequest) returns (GetOrderedCleaningsResponse) {}
 	rpc OrderNewCleaning (OrderNewCleaningRequest) returns (OrderNewCleaningResponse) {}
 	rpc GetCleaners (GetCleanersRequest) returns (GetCleanersResponse) {}
+	rpc ChangeOrderedCleaningState (ChangeOrderedCleaningStateRequest) returns (ChangeOrderedCleaningStateResponse) {}
 }
-
-
 
 message AuthSendCodeRequest {
 	string Phone = 1;
@@ -31,7 +30,6 @@ message AuthSendCodeResponse {
 	AuthSendCodeStatus ResponseStatus = 1;
 	string ErrorMessage = 2;
 }
-
 
 
 message AuthValidateCodeRequest {
@@ -72,6 +70,9 @@ message GetProfileInfoResponse {
 	string Name = 1;
 	string Address = 2;
 	string AvatarLink = 3;
+	string Phone = 4;
+	string UserRole = 5;
+	int32 Money = 6;
 }
 
 
@@ -141,7 +142,7 @@ message GetOrderedCleaningsRequest {
 
 enum OrderedCleaningState {
 	WaitingForCleanerConfirmation = 0;
-	ClientIsWaitingForCleanerArrival = 1;
+	WaitingForCleanerArrival = 1;
 	CleanerWorkInProgress = 2;
 	Canceled = 3;
 	Completed = 4;
@@ -150,11 +151,14 @@ enum OrderedCleaningState {
 message OrderedCleaning {
 	int32 Id = 1;
 	string CustomerPhone = 2;
-	string CleanerPhone = 3;
-	CleaningType CleaningType = 4;
-	int32 ApartmentArea = 5;
-	int32 Price = 6;
-	OrderedCleaningState State = 7;	
+	string CustomerName = 3;
+	string CleanerPhone = 4;
+	string CleanerName = 5;
+	CleaningType CleaningType = 6;
+	string Address = 7;
+	int32 ApartmentArea = 8;
+	int32 Price = 9;
+	OrderedCleaningState State = 10;	
 }
 
 message GetOrderedCleaningsResponse {
@@ -172,6 +176,7 @@ message OrderNewCleaningRequest
 message OrderNewCleaningResponse
 {
 	OrderedCleaningState OrderedCleaningState = 1;
+	string Info = 2;
 }
 
 
@@ -190,4 +195,24 @@ message Cleaner
 message GetCleanersResponse
 {
 	repeated Cleaner Cleaners = 1;
+}
+
+
+message ChangeOrderedCleaningStateRequest
+{
+	int32 OrderId = 1;
+	OrderedCleaningState RequiredState = 2;
+	
+}
+
+enum ChangeOrderedCleaningStateStatus
+{
+	OrderStatusChangedSuccessfully = 0;
+	OrderStatusChangeError = 1;
+}
+
+message ChangeOrderedCleaningStateResponse
+{
+	ChangeOrderedCleaningStateStatus ResponseStatus = 1;
+	string ErrorMessage = 2;
 }

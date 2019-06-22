@@ -86,7 +86,7 @@ namespace FridayClean.Common
 		public static class Messages
 		{
 			public const string UnableToCallRpcMessage =
-				"Ошибка: Невозможно выполнить запрос. Возможно, сервер недоступен, попробуйте позже.";
+				"Ошибка: Невозможно выполнить запрос.";
 
 			public const string SecureStorageNotSupportedMessage =
 				"Ошибка: Ваш телефон не поддерживает SecureStorage! После перезапуска приложения придется авторизоваться заного.";

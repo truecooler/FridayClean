@@ -3,9 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
              xmlns:b="clr-namespace:Prism.Behaviors;assembly=Prism.Forms"
+             xmlns:converters="clr-namespace:FridayClean.Client.Converters"
              prism:ViewModelLocator.AutowireViewModel="True"
              x:Class="FridayClean.Client.Views.CleaningsPage"
-             Title="Панель заказанных уборок">
+             Title="Меню заказанных уборок">
     <ContentPage.Content>
         <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
             <ActivityIndicator 
@@ -14,8 +15,6 @@
                 IsVisible="true"  
                 Color="{StaticResource FridayCleanBlackColor}"  
                 BackgroundColor="Transparent"/>
-
-
             <StackLayout IsVisible="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" Margin="10"
                          HorizontalOptions="Center" VerticalOptions="Center">
                 <Label Text="Заказанные уборки:" HorizontalOptions="Center"></Label>
@@ -23,30 +22,60 @@
                           HorizontalOptions="FillAndExpand"
                           VerticalOptions="FillAndExpand"
                           HasUnevenRows="True"
-                  
                           SelectedItem="{Binding SelectedItem}"
-                          ItemsSource="{Binding OrderedCleanings}" Margin="5" HeightRequest="200">
+                          ItemsSource="{Binding OrderedCleanings}" Margin="5">
+                    <ListView.Header>
+                        <Grid  Padding="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="5*"/>
+                                <ColumnDefinition Width="5*"/>
+                                <ColumnDefinition Width="5*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Label Text="#"  Grid.Column="0" Grid.Row="0" />
+                            <Label Text="Клинер"  Grid.Column="1" Grid.Row="0"/>
+                            <Label Text="Тип уборки" Grid.Column="2" Grid.Row="0"/>
+                            <Label Text="Статус" Grid.Column="3" Grid.Row="0"/>
+
+                        </Grid>
+                    </ListView.Header>
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <ViewCell>
-                                <StackLayout Padding="5">
-                                    <Label Text="{Binding Id}" />
-                                    <Label Text="{Binding CustomerPhone}" />
-                                    <Label Text="{Binding CleanerPhone}" />
-                                    <Label Text="{Binding CleaningType}" />
-                                    <Label Text="{Binding ApartmentArea}" />
-                                    <Label Text="{Binding Price}" />
-                                    <Label Text="{Binding State}" />
-                                </StackLayout>
+                                <Grid Padding="5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="5*"/>
+                                        <ColumnDefinition Width="5*"/>
+                                        <ColumnDefinition Width="5*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <StackLayout Grid.Column="0" Grid.Row="0">
+                                        <Label Text="{Binding Id}" />
+                                    </StackLayout>
+                                    <StackLayout  Grid.Column="1" Grid.Row="0">
+                                        <Label Text="{Binding CleanerName}" />
+                                        <Label Text="{Binding CleanerPhone}" />
+                                    </StackLayout>
+                                    <StackLayout  Grid.Column="2" Grid.Row="0">
+                                        <Label Text="{Binding CleaningType, Converter={StaticResource CleaningTypeConverter}}" />
+                                    </StackLayout>
+                                    <StackLayout  Grid.Column="3" Grid.Row="0">
+                                        <Label Text="{Binding State, Converter={StaticResource OrderedCleaningStateConverter}}" />
+                                    </StackLayout>
+                                </Grid>
+                                
                             </ViewCell>
                         </DataTemplate>
                     </ListView.ItemTemplate>
-                    <ListView.Behaviors>
-                        <b:EventToCommandBehavior EventName="ItemTapped" 
-                                                  Command="{Binding ItemTappedCommand}" />
-                    </ListView.Behaviors>
                 </ListView>
-                <Button Text="Заказать уборку" Command="{Binding OrderNewCleaningCommand}"></Button>
+                <Button Text="Информация о заказе" Style="{StaticResource FridayCleanButtonStyle}" Command="{Binding OpenOrderedCleaningPageCommand}"></Button>
+                <Button Text="Заказать уборку" Style="{StaticResource FridayCleanButtonStyle}" Command="{Binding OrderNewCleaningCommand}" IsVisible="{Binding IsCustomer}"></Button>
             </StackLayout>
         </StackLayout>
     </ContentPage.Content>

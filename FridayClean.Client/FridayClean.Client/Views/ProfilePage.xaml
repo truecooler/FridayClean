@@ -6,8 +6,9 @@
              prism:ViewModelLocator.AutowireViewModel="True"
 			 Title="Профиль">
 	<ContentPage.Content>
-		<StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+        <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Margin="10">
             <ActivityIndicator 
+                HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"
                 IsRunning="{Binding IsBusy}"  
                 IsEnabled="{Binding IsBusy}"  
                 IsVisible="true"  
@@ -15,18 +16,21 @@
                 BackgroundColor="Transparent"/>
 
 
-            <StackLayout IsVisible="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" Margin="10">
+            <StackLayout IsVisible="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" Margin="10"
+                         HorizontalOptions="Center" VerticalOptions="StartAndExpand">
 
-                <Image HorizontalOptions="Center" HeightRequest="300" WidthRequest="300" Source="{Binding ProfileAvatarLink}" />
+                <Image HorizontalOptions="Center" HeightRequest="250" WidthRequest="250" Source="{Binding ProfileAvatarLink}" />
 
                 <Label Text="{Binding ProfileName, StringFormat='Приветствуем вас, {0}'}"
+                       HorizontalOptions="Center" VerticalOptions="CenterAndExpand" />
+                <Label Text="{Binding ProfileMoney, StringFormat='Ваш баланс: {0} руб.'}"
                        HorizontalOptions="Center" VerticalOptions="CenterAndExpand" />
 
                 <Label Text="{Binding ProfileAddress, StringFormat='Выбранный вами адрес: {0}'}"
                        HorizontalOptions="Center" VerticalOptions="CenterAndExpand"/>
 
-                <Button Text="Редактировать профиль" Command="{Binding EditProfileCommand}"></Button>
-                <Button Text="Выйти из аккаунта" Command="{Binding LogoutCommand}"></Button>
+                <Button Text="Редактировать профиль" Style="{StaticResource FridayCleanButtonStyle}" Command="{Binding EditProfileCommand}"></Button>
+                <Button Text="Выйти из аккаунта" Style="{StaticResource FridayCleanButtonStyle}" Command="{Binding LogoutCommand}"></Button>
             </StackLayout>
 
 		</StackLayout>

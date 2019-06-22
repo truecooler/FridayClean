@@ -59,6 +59,7 @@ namespace FridayClean.Server.DataBaseModels
 						Phone = "79855439087",
 						AvatarLink = "https://pp.userapi.com/c824701/v824701171/1557a9/gPMy38gq8Mo.jpg",
 						Money = 0,
+						Address = "",
 						Role = UserRole.Cleaner
 					},
 					new User()
@@ -67,14 +68,16 @@ namespace FridayClean.Server.DataBaseModels
 						Phone = "79458439027",
 						AvatarLink = "https://pp.userapi.com/c856124/v856124851/6a87c/5YtDkKBthNo.jpg",
 						Money = 0,
+						Address = "",
 						Role = UserRole.Cleaner
 					},
 					new User()
 					{
 						Name = "Елена",
-						Phone = "79154339282",
+						Phone = "79998718072",
 						AvatarLink = "https://pp.userapi.com/c845418/v845418531/15ea60/LHdACnxrGys.jpg",
 						Money = 0,
+						Address = "",
 						Role = UserRole.Cleaner
 					},
 					new User()
@@ -83,14 +86,16 @@ namespace FridayClean.Server.DataBaseModels
 						Phone = "79755639081",
 						AvatarLink = "https://pp.userapi.com/c850132/v850132416/2ccbe/bktlyZOIF3w.jpg",
 						Money = 0,
+						Address = "",
 						Role = UserRole.Cleaner
 					},
 					new User()
 					{
-						Name = "Алексей",
+						Name = "Владислав",
 						Phone = "78751339281",
-						AvatarLink = "https://img.tsargrad.tv/cache/a/a/20190203_gaf_ru04_055.jpg/w1056h594fill.jpg",
+						AvatarLink = "https://pp.userapi.com/c637818/v637818403/52564/WCqTU2WilIM.jpg",
 						Money = 0,
+						Address = "",
 						Role = UserRole.Cleaner
 					}
 

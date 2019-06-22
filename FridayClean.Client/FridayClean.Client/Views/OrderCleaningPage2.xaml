@@ -8,8 +8,9 @@
              Title="Выбор клинера">
 
     <ContentPage.Content>
-        <StackLayout HorizontalOptions="Center" VerticalOptions="StartAndExpand">
+        <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
             <ActivityIndicator 
+                HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"
                 IsRunning="{Binding IsBusy}"  
                 IsEnabled="{Binding IsBusy}"  
                 IsVisible="true"  
@@ -37,12 +38,8 @@
                             </ViewCell>
                         </DataTemplate>
                     </ListView.ItemTemplate>
-                    <ListView.Behaviors>
-                        <b:EventToCommandBehavior EventName="ItemSelected" 
-                                                  Command="{Binding ItemSelectedCommand}" />
-                    </ListView.Behaviors>
                 </ListView>
-                <Button Text="Готово" Command="{Binding NextStepCommand}"></Button>
+                <Button Text="Готово" Style="{StaticResource FridayCleanButtonStyle}" Command="{Binding NextStepCommand}"></Button>
             </StackLayout>
         </StackLayout>
     </ContentPage.Content>

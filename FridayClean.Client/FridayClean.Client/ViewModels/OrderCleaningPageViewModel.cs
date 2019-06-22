@@ -14,6 +14,7 @@ using Xamarin.Forms.Internals;
 using FridayClean.Common;
 using FridayClean.Common.Helpers;
 using Plugin.Toast;
+using Plugin.Toast.Abstractions;
 using Prism.Services;
 
 namespace FridayClean.Client.ViewModels
@@ -26,7 +27,7 @@ namespace FridayClean.Client.ViewModels
 		private INavigationService _navigationService;
 		private IFridayCleanApi _api;
 		private IPageDialogService _dialogService;
-		public DelegateCommand ItemSelectedCommand { get; set; }
+		//public DelegateCommand ItemSelectedCommand { get; set; }
 		public DelegateCommand ShowCleaningServiceDescriptionCommand { get; set; }
 		public DelegateCommand NextStepCommand { get; set; }
 
@@ -38,10 +39,10 @@ namespace FridayClean.Client.ViewModels
 			set => SetProperty(ref _isBusy, value);
 		}
 
-		private void OnItemSelectedCommand()
-		{
-			NextStepCommand.RaiseCanExecuteChanged();
-		}
+		//private void OnItemSelectedCommand()
+		//{
+		//	NextStepCommand.RaiseCanExecuteChanged();
+		//}
 
 		private async void OnShowCleaningServiceDescriptionCommand()
 		{
@@ -52,8 +53,28 @@ namespace FridayClean.Client.ViewModels
 
 		}
 
-		private void OnNextStepCommand()
+		private async void OnNextStepCommand()
 		{
+			IsBusy = true;
+			GetProfileInfoResponse profile = null;
+			try
+			{
+				profile = await _api.GetProfileInfoAsync(new GetProfileInfoRequest());
+			}
+				catch (GrpcExceptionBase ex)
+			{
+				CrossToastPopUp.Current.ShowToastError($"{Constants.Messages.UnableToCallRpcMessage} ({ex.Message})");
+				IsBusy = false;
+				return;
+			}
+
+			if (profile.Money - CalculatedPrice < 0)
+			{
+				CrossToastPopUp.Current.ShowToastMessage($"Ошибка: недостаточно средств. Ваш баланс: {profile.Money} руб., стоимость услуги: {CalculatedPrice} руб.",ToastLength.Long);
+				IsBusy = false;
+				return;
+			}
+
 			var order = new OrderNewCleaningRequest()
 			{
 				CleaningType = SelectedItem.CleaningType,
@@ -62,7 +83,7 @@ namespace FridayClean.Client.ViewModels
 
 			NavigationParameters parameters = new NavigationParameters();
 			parameters.Add("order",order);
-			IsBusy = true;
+			//IsBusy = true;
 			_navigationService.NavigateAsync("OrderCleaningPage2", parameters);
 		}
 
@@ -95,6 +116,7 @@ namespace FridayClean.Client.ViewModels
 				}
 
 				SetProperty(ref _selectedItem, value);
+				NextStepCommand.RaiseCanExecuteChanged();
 			}
 		}
 
@@ -126,7 +148,7 @@ namespace FridayClean.Client.ViewModels
 		public OrderCleaningPageViewModel(IFridayCleanApi api, INavigationService navigationService, IPageDialogService dialogService) : base(
 			navigationService)
 		{
-			ItemSelectedCommand = new DelegateCommand(OnItemSelectedCommand);
+			//ItemSelectedCommand = new DelegateCommand(OnItemSelectedCommand);
 			ShowCleaningServiceDescriptionCommand = new DelegateCommand(OnShowCleaningServiceDescriptionCommand);
 			NextStepCommand = new DelegateCommand(OnNextStepCommand,()=>
 			{
@@ -143,8 +165,7 @@ namespace FridayClean.Client.ViewModels
 		public async override void OnNavigatedTo(INavigationParameters parameters)
 		{
 			IsBusy = true;
-			SelectedItem = null;
-			NextStepCommand.RaiseCanExecuteChanged();
+			//SelectedItem = null;
 			GetCleaningServicesResponse response = null;
 			try
 			{
